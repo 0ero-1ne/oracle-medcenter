@@ -1,0 +1,73 @@
+2023/04/29 21:55:11 [error] 7224#7500: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/04/29 21:55:18 [error] 7224#7500: *3 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/04/29 21:55:21 [error] 7224#7500: *5 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/04/29 22:44:32 [error] 2680#3352: *102 FastCGI sent in stderr: "An Error occurred while handling another error:
+yii\web\HeadersAlreadySentException: Headers already sent in D:\DB_Blinova\course-project\medcent\controllers\SiteController.php on line 69. in D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php:368
+Stack trace:
+#0 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php(341): yii\web\Response->sendHeaders()
+#1 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\ErrorHandler.php(136): yii\web\Response->send()
+#2 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\base\ErrorHandler.php(152): yii\web\ErrorHandler->renderException()
+#3 [internal function]: yii\base\ErrorHandler->handleException()
+#4 {main}
+Previous exception:
+yii\web\HeadersAlreadySentException: Headers already sent in D:\DB_Blinova\course-project\medcent\controllers\SiteController.php on line 69. in D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php:368
+Stack trace:
+#0 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php(341): yii\web\Response->sendHeaders()
+#1 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\base\Application.php(390): yii\web\Response->send()
+#2 D:\DB_Blinova\course-project\medcent\web\index.php(12): yii\base\Application->run()
+#3 {main}
+$_SERVER = [
+    'ALLUSERSPROFILE' => 'C:\\ProgramData',
+    'APPDATA' => 'C:\\Users\\Dimav\\AppData\\Roaming',
+    'ChocolateyInstall' => 'C:\\ProgramData\\chocolatey',
+    'ChocolateyLastPathUpdate' => '133272663614230316',
+    'ChocolateyToolsLocation' => 'C:\\tools',
+    'CommonProgramFiles' => 'C:\\Program Files\\Common Files',
+    'CommonProgramFiles(x86)' => 'C:\\Program Files (x86)\\Common Files',
+    'CommonProgramW6432' => 'C:\\Program Files\\Common Files',
+    'COMPUTERNAME' => 'DMITRY',
+    'ComSpec' => 'C:\\Windows\\system32\\cmd.exe',
+    'DriverData' => 'C:\\Windows\\System32\\Drivers\\DriverData',
+    'GOPATH' => 'C:\\Users\\Dimav\\go',
+    'HOMEDRIVE' => 'C:',
+2023/04/29 22:44:32 [error] 2680#3352: *102 FastCGI sent in stderr: "  'ProgramData' => 'C:\\ProgramData',
+    'ProgramFiles' => 'C:\\Program Files',
+    'ProgramFiles(x86)' => 'C:\\Program Files (x86)',
+    'ProgramW6432' => 'C:\\Program Files',
+    'PROMPT' => '$P$G',
+    'PSModulePath' => 'C:\\Program Files\\WindowsPowerShell\\Modules;C:\\Windows\\system32\\WindowsPowerShell\\v1.0\\Modules',
+    'PUBLIC' => 'C:\\Users\\Public',
+    'SESSIONNAME' => 'Console',
+    'SystemDrive' => 'C:',
+    'SystemRoot' => 'C:\\Windows',
+    'TEMP' => 'C:\\Users\\Dimav\\AppData\\Local\\Temp',
+    'TMP' => 'C:\\Users\\Dimav\\AppData\\Local\\Temp',
+    'USERDOMAIN' => 'DMITRY',
+    'USERDOMAIN_ROAMINGPROFILE' => 'DMITRY',
+    'USERNAME' => 'Dimav',
+    'USERPROFILE' => 'C:\\Users\\Dimav',
+    'VBOX_MSI_INSTALL_PATH' => 'C:\\Program Files\\Oracle\\VirtualBox\\',
+    'windir' => 'C:\\Windows',
+    'ZES_ENABLE_SYSMAN' => '1',
+    'HTTP_CACHE_CONTROL' => 'no-cache',
+    'HTTP_PRAGMA' => 'no-cache',
+    'HTTP_SEC_FETCH_USER' => '?1',
+    'HTTP_SEC_FETCH_SITE' => 'none',
+    'HTTP_SEC_FETCH_MODE' => 'navigate',
+    'HTTP_SEC_FETCH_DEST' => 'document',
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1',
+    'HTTP_COOKIE' => 'PHPSESSID=rbbri5alme91d525akklf9ujfh; _csrf=6e80ea711a786e53caa23188802387ffa35b1908084a8d310bf17172e9630ae1a%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22KyBG2VzQfhLluYDwL_sFtLQJ8zMuEanC%22%3B%7D',
+    'HTTP_CONNECTION' => 'keep-alive',
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate, br',
+    'HTTP_ACCEPT_LANGUAGE' => 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0',
+    'HTTP_HOST' => 'localhost',
+    'REDIRECT_STATUS' => '200',
+    'SERVER_NAME' => 'www.medcent.by',
+    'SERVER_PORT' => '80',
+    'SERVER_ADDR' => '127.0.0.1',
+    'REMOTE_PORT' => '54140',
+    'REMOTE_ADDR' => '127.0.0.1',
+    'SERVER_S
+2023/04/30 16:23:52 [error] 3364#12772: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
