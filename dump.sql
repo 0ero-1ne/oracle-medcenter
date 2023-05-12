@@ -589,10 +589,30 @@ CREATE OR REPLACE PROCEDURE create_address
     p_flat in ADDRESSES.flat%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF TRIM(p_region) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    IF TRIM(p_town) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    IF TRIM(p_street) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    IF TRIM(p_house_number) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    IF TRIM(p_flat) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+
     INSERT INTO ADDRESSES(region, town, street, house_number, flat)
-    VALUES (p_region, p_town, p_street, p_house_number, p_flat);
+    VALUES (TRIM(p_region), TRIM(p_town), TRIM(p_street), TRIM(p_house_number), TRIM(p_flat));
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
 END;
 --/
 
@@ -616,6 +636,9 @@ BEGIN
         flat = (select nvl2(p_flat, p_flat, (select flat from addresses where id = p_id)) from dual)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure_error');
 END;
 --/
 
@@ -628,6 +651,9 @@ IS
 BEGIN
     DELETE FROM ADDRESSES WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure_error');
 END;
 --/
 
@@ -643,10 +669,35 @@ CREATE OR REPLACE PROCEDURE create_passport
     p_authority in PASSPORTS.authority%TYPE
 )
 IS 
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF TRIM(p_passport_number) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    IF TRIM(p_date_of_issue) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    IF TRIM(p_date_of_expiry) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    IF TRIM(p_authority) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
     INSERT INTO PASSPORTS(passport_number, date_of_issue, date_of_expiry, authority)
     VALUES (p_passport_number, to_date(p_date_of_issue, 'dd.mm.yyyy'), to_date(p_date_of_expiry, 'dd.mm.yyyy'), p_authority);
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN    
+        dbms_output.put_line('Procedure error! Check you parameters');
+END;
+--/
+
+--/
+BEGIN
+    create_passport('12345', '18.02.2023', '18.02.2033', '12345');
 END;
 --/
 
@@ -662,12 +713,15 @@ CREATE OR REPLACE PROCEDURE update_passport
 IS
 BEGIN
     UPDATE PASSPORTS
-    SET passport_number = (select nvl2(p_passport_number, p_passport_number, (select passport_number from passports where id = p_id)) from dual),
+    SET passport_number = (select nvl2(p_passport_number, TRIM(p_passport_number), (select passport_number from passports where id = p_id)) from dual),
         date_of_issue = (select nvl2(p_date_of_issue, to_date(p_date_of_issue, 'dd.mm.yyyy'), (select date_of_issue from passports where id = p_id)) from dual),
         date_of_expiry = (select nvl2(p_date_of_expiry, to_date(p_date_of_expiry, 'dd.mm.yyyy'), (select date_of_expiry from passports where id = p_id)) from dual),
-        authority = (select nvl2(p_authority, p_authority, (select authority from passports where id = p_id)) from dual)
+        authority = (select nvl2(p_authority, TRIM(p_authority), (select authority from passports where id = p_id)) from dual)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN    
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -680,6 +734,9 @@ IS
 BEGIN
     DELETE FROM PASSPORTS WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN    
+        dbms_output.put_line('Procedure error!');
 END;
 --/
 
@@ -693,11 +750,25 @@ CREATE OR REPLACE PROCEDURE create_user
     p_email in USERS.email%TYPE,
     p_password in CLOB
 )
-IS 
+IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF TRIM(p_email) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_password) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
     INSERT INTO USERS(user_role, email, password)
-    VALUES (p_user_role, p_email, (select hash_password(p_password) from DUAL));
+    VALUES (p_user_role, TRIM(p_email), (select hash_password(TRIM(p_password)) from DUAL));
     COMMIT;
+EXCEPTION 
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error');
 END;
 --/
 
@@ -710,6 +781,7 @@ CREATE OR REPLACE PROCEDURE update_user
     p_password in CLOB
 )
 IS
+    empty_parameter_ex EXCEPTION;
     new_password RAW(32);
 BEGIN
     select password into new_password from users where id = p_id;
@@ -721,10 +793,15 @@ BEGIN
 
     UPDATE USERS
     SET user_role = (select nvl2(p_user_role, p_user_role, (select user_role from users where id = p_id)) from dual),
-        email = (select nvl2(p_email, p_email, (select email from users where id = p_id)) from dual),
+        email = (select nvl2(p_email, TRIM(p_email), (select email from users where id = p_id)) from dual),
         password = new_password
     WHERE id = p_id;
     COMMIT;
+EXCEPTION 
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error');
 END;
 --/
 
@@ -740,8 +817,6 @@ BEGIN
 END;
 --/
 
-
-
 -- PERSONS PROCEDURES
 --/
 CREATE OR REPLACE PROCEDURE create_person
@@ -754,12 +829,39 @@ CREATE OR REPLACE PROCEDURE create_person
     p_gender in PERSONS.gender%TYPE
 )
 IS 
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF TRIM(p_first_name) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_second_name) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_last_name) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_birth_date) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_gender) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
     INSERT INTO PERSONS(first_name, second_name, last_name, passport_id, birth_date, gender)
-    VALUES (p_first_name, p_second_name, p_last_name, p_passport_id, to_date(p_birth_date, 'dd.mm.yyyy'), p_gender);
+    VALUES (TRIM(p_first_name), TRIM(p_second_name), TRIM(p_last_name), p_passport_id, to_date(p_birth_date, 'dd.mm.yyyy'), p_gender);
     COMMIT;
+EXCEPTION 
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
+
 
 --/
 CREATE OR REPLACE PROCEDURE update_person
@@ -775,14 +877,17 @@ CREATE OR REPLACE PROCEDURE update_person
 IS 
 BEGIN
     UPDATE PERSONS
-    SET first_name = (select nvl2(p_first_name, p_first_name, (select first_name from persons where id = p_id)) from dual),
-        second_name = (select nvl2(p_second_name, p_second_name, (select second_name from persons where id = p_id)) from dual),
-        last_name = (select nvl2(p_last_name, p_last_name, (select last_name from persons where id = p_id)) from dual),
+    SET first_name = (select nvl2(p_first_name, TRIM(p_first_name), (select first_name from persons where id = p_id)) from dual),
+        second_name = (select nvl2(p_second_name, TRIM(p_second_name), (select second_name from persons where id = p_id)) from dual),
+        last_name = (select nvl2(p_last_name, TRIM(p_last_name), (select last_name from persons where id = p_id)) from dual),
         passport_id = (select nvl2(p_passport_id, p_passport_id, (select passport_id from persons where id = p_id)) from dual),
         birth_date = (select nvl2(p_birth_date, to_date(p_birth_date, 'dd.mm.yyyy'), (select birth_date from persons where id = p_id)) from dual),
         gender = (select nvl2(p_gender, p_gender, (select gender from persons where id = p_id)) from dual)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -795,6 +900,9 @@ IS
 BEGIN
     DELETE FROM PERSONS WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -807,10 +915,24 @@ CREATE OR REPLACE PROCEDURE create_person_address
     p_person_id in PERSON_ADDRESS.person_id%TYPE,
     p_address_id in PERSON_ADDRESS.address_id%TYPE
 )
-IS 
+IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF p_person_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_address_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
     INSERT INTO PERSON_ADDRESS(person_id, address_id) VALUES (p_person_id, p_address_id);
     COMMIT;
+EXCEPTION 
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -828,6 +950,9 @@ BEGIN
         address_id = (select nvl2(p_address_id, p_address_id, (select address_id from person_address where id = p_id)) from dual)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -840,6 +965,9 @@ IS
 BEGIN
     DELETE FROM PERSON_ADDRESS WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -854,9 +982,27 @@ CREATE OR REPLACE PROCEDURE create_patient
     p_phone in PATIENTS.phone%TYPE
 )
 IS 
+    empty_parameter_ex EXCEPTION;
 BEGIN
-    INSERT INTO PATIENTS(auth_data, person_id, phone) VALUES (p_auth_data, p_person_id, p_phone);
+    IF p_auth_data IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_person_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_phone) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    INSERT INTO PATIENTS(auth_data, person_id, phone) VALUES (p_auth_data, p_person_id, TRIM(p_phone));
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -868,14 +1014,17 @@ CREATE OR REPLACE PROCEDURE update_patient
     p_person_id in PATIENTS.person_id%TYPE,
     p_phone in PATIENTS.phone%TYPE
 )
-IS 
+IS
 BEGIN
     UPDATE PATIENTS
     SET auth_data = (select nvl2(p_auth_data, p_auth_data, (select auth_data from patients where id = p_id)) from dual),
         person_id = (select nvl2(p_person_id, p_person_id, (select person_id from patients where id = p_id)) from dual),
-        phone = (select nvl2(p_phone, p_phone, (select phone from patients where id = p_id)) from dual)
+        phone = (select nvl2(p_phone, TRIM(p_phone), (select phone from patients where id = p_id)) from dual)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -888,6 +1037,9 @@ IS
 BEGIN
     DELETE FROM PATIENTS WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1501,6 +1653,24 @@ IS
 BEGIN
     hash := dbms_crypto.hash(f_password, dbms_crypto.hash_sh256);
     RETURN hash;
+END;
+--/
+
+--/
+CREATE OR REPLACE FUNCTION compare_passwords
+(
+    user_id in USERS.id%TYPE,
+    password in CLOB
+)
+RETURN NUMBER
+IS
+    hash RAW(32);
+    user_password RAW(32);
+BEGIN
+    SELECT password INTO user_password FROM USERS WHERE id = user_id;
+
+    hash := dbms_crypto.hash(password, dbms_crypto.hash_sh256);
+    RETURN DBMS_LOB.compare(hash, user_password);
 END;
 --/
 
