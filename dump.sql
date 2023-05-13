@@ -629,11 +629,11 @@ CREATE OR REPLACE PROCEDURE update_address
 IS
 BEGIN
     UPDATE ADDRESSES
-    SET region = (select nvl2(p_region, p_region, (select region from addresses where id = p_id)) from dual),
-        town = (select nvl2(p_town, p_town, (select town from addresses where id = p_id)) from dual),
-        street = (select nvl2(p_street, p_street, (select street from addresses where id = p_id)) from dual),
-        house_number = (select nvl2(p_house_number, p_house_number, (select house_number from addresses where id = p_id)) from dual),
-        flat = (select nvl2(p_flat, p_flat, (select flat from addresses where id = p_id)) from dual)
+    SET region = nvl(TRIM(p_region), region),
+        town = nvl(TRIM(p_town), town),
+        street = nvl(TRIM(p_street), street),
+        house_number = nvl(TRIM(p_house_number), house_number),
+        flat = nvl(TRIM(p_flat), flat)
     WHERE id = p_id;
     COMMIT;
 EXCEPTION
@@ -696,12 +696,6 @@ END;
 --/
 
 --/
-BEGIN
-    create_passport('12345', '18.02.2023', '18.02.2033', '12345');
-END;
---/
-
---/
 CREATE OR REPLACE PROCEDURE update_passport
 (
     p_id in PASSPORTS.id%TYPE,
@@ -713,10 +707,10 @@ CREATE OR REPLACE PROCEDURE update_passport
 IS
 BEGIN
     UPDATE PASSPORTS
-    SET passport_number = (select nvl2(p_passport_number, TRIM(p_passport_number), (select passport_number from passports where id = p_id)) from dual),
-        date_of_issue = (select nvl2(p_date_of_issue, to_date(p_date_of_issue, 'dd.mm.yyyy'), (select date_of_issue from passports where id = p_id)) from dual),
-        date_of_expiry = (select nvl2(p_date_of_expiry, to_date(p_date_of_expiry, 'dd.mm.yyyy'), (select date_of_expiry from passports where id = p_id)) from dual),
-        authority = (select nvl2(p_authority, TRIM(p_authority), (select authority from passports where id = p_id)) from dual)
+    SET passport_number = nvl(TRIM(p_passport_number), passport_number),
+        date_of_issue = nvl(to_date(TRIM(p_date_of_issue), 'dd.mm.yyyy'), date_of_issue),
+        date_of_expiry = nvl(to_date(TRIM(p_date_of_expiry), 'dd.mm.yyyy'), date_of_expiry),
+        authority = nvl(TRIM(p_authority), authority)
     WHERE id = p_id;
     COMMIT;
 EXCEPTION
@@ -778,28 +772,17 @@ CREATE OR REPLACE PROCEDURE update_user
     p_id in USERS.id%TYPE,
     p_user_role in USERS.user_role%TYPE,
     p_email in USERS.email%TYPE,
-    p_password in CLOB
+    p_password in VARCHAR2
 )
 IS
-    empty_parameter_ex EXCEPTION;
-    new_password RAW(32);
 BEGIN
-    select password into new_password from users where id = p_id;
-    
-    IF p_password IS NOT NULL
-    THEN
-        select hash_password(p_password) into new_password from dual;
-    END IF;
-
     UPDATE USERS
-    SET user_role = (select nvl2(p_user_role, p_user_role, (select user_role from users where id = p_id)) from dual),
-        email = (select nvl2(p_email, TRIM(p_email), (select email from users where id = p_id)) from dual),
-        password = new_password
+    SET user_role = NVL(TRIM(p_user_role), user_role),
+        email = NVL(TRIM(p_email), email),
+        password = NVL(hash_password(TRIM(p_password)),password)
     WHERE id = p_id;
     COMMIT;
-EXCEPTION 
-    WHEN empty_parameter_ex THEN
-        dbms_output.put_line('Empty parameter');
+EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error');
 END;
@@ -852,7 +835,7 @@ BEGIN
     END IF;
     
     INSERT INTO PERSONS(first_name, second_name, last_name, passport_id, birth_date, gender)
-    VALUES (TRIM(p_first_name), TRIM(p_second_name), TRIM(p_last_name), p_passport_id, to_date(p_birth_date, 'dd.mm.yyyy'), p_gender);
+    VALUES (TRIM(p_first_name), TRIM(p_second_name), TRIM(p_last_name), p_passport_id, to_date(TRIM(p_birth_date), 'dd.mm.yyyy'), TRIM(p_gender));
     COMMIT;
 EXCEPTION 
     WHEN empty_parameter_ex THEN
@@ -861,7 +844,6 @@ EXCEPTION
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
-
 
 --/
 CREATE OR REPLACE PROCEDURE update_person
@@ -877,12 +859,12 @@ CREATE OR REPLACE PROCEDURE update_person
 IS 
 BEGIN
     UPDATE PERSONS
-    SET first_name = (select nvl2(p_first_name, TRIM(p_first_name), (select first_name from persons where id = p_id)) from dual),
-        second_name = (select nvl2(p_second_name, TRIM(p_second_name), (select second_name from persons where id = p_id)) from dual),
-        last_name = (select nvl2(p_last_name, TRIM(p_last_name), (select last_name from persons where id = p_id)) from dual),
-        passport_id = (select nvl2(p_passport_id, p_passport_id, (select passport_id from persons where id = p_id)) from dual),
-        birth_date = (select nvl2(p_birth_date, to_date(p_birth_date, 'dd.mm.yyyy'), (select birth_date from persons where id = p_id)) from dual),
-        gender = (select nvl2(p_gender, p_gender, (select gender from persons where id = p_id)) from dual)
+    SET first_name = nvl(TRIM(p_first_name), first_name),
+        second_name = nvl(TRIM(p_second_name), second_name),
+        last_name = nvl(TRIM(p_last_name), last_name),
+        passport_id = nvl(p_passport_id, passport_id),
+        birth_date = nvl(to_date(TRIM(p_birth_date), 'dd.mm.yyyy'), birth_date),
+        gender = nvl(TRIM(p_gender), gender)
     WHERE id = p_id;
     COMMIT;
 EXCEPTION
@@ -946,8 +928,8 @@ CREATE OR REPLACE PROCEDURE update_person_address
 IS 
 BEGIN
     UPDATE PERSON_ADDRESS
-    SET person_id = (select nvl2(p_person_id, p_person_id, (select person_id from person_address where id = p_id)) from dual),
-        address_id = (select nvl2(p_address_id, p_address_id, (select address_id from person_address where id = p_id)) from dual)
+    SET person_id = nvl(p_person_id, person_id),
+        address_id = nvl(p_address_id, address_id)
     WHERE id = p_id;
     COMMIT;
 EXCEPTION
@@ -1017,9 +999,9 @@ CREATE OR REPLACE PROCEDURE update_patient
 IS
 BEGIN
     UPDATE PATIENTS
-    SET auth_data = (select nvl2(p_auth_data, p_auth_data, (select auth_data from patients where id = p_id)) from dual),
-        person_id = (select nvl2(p_person_id, p_person_id, (select person_id from patients where id = p_id)) from dual),
-        phone = (select nvl2(p_phone, TRIM(p_phone), (select phone from patients where id = p_id)) from dual)
+    SET auth_data = nvl(p_auth_data, auth_data),
+        person_id = nvl(p_person_id, person_id),
+        phone = nvl(TRIM(p_phone), phone)
     WHERE id = p_id;
     COMMIT;
 EXCEPTION
@@ -1057,11 +1039,45 @@ CREATE OR REPLACE PROCEDURE create_employee
     p_salary in EMPLOYEES.salary%TYPE,
     p_on_vacation in EMPLOYEES.on_vacation%TYPE
 )
-IS 
+IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF p_auth_data IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_person_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_hire_date IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_education IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_salary IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_phone) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_on_vacation IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
     INSERT INTO EMPLOYEES(auth_data, person_id, hire_date, education, phone, salary, on_vacation)
-    VALUES(p_auth_data, p_person_id, to_date(p_hire_date, 'dd.mm.yyyy'), p_education, p_phone, p_salary, p_on_vacation);
+    VALUES(p_auth_data, p_person_id, to_date(TRIM(p_hire_date), 'dd.mm.yyyy'), TRIM(p_education), TRIM(p_phone), p_salary, TRIM(p_on_vacation));
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1080,15 +1096,18 @@ CREATE OR REPLACE PROCEDURE update_employee
 IS 
 BEGIN
     UPDATE EMPLOYEES
-    SET auth_data = (select nvl2(p_auth_data, p_auth_data, (select auth_data from employees where id = p_id)) from dual),
-        person_id = (select nvl2(p_person_id, p_person_id, (select person_id from employees where id = p_id)) from dual),
-        hire_date = (select nvl2(p_hire_date, to_date(p_hire_date, 'dd.mm.yyyy'), (select hire_date from employees where id = p_id)) from dual),
-        education = (select nvl2(p_education, p_education, (select education from employees where id = p_id)) from dual),
-        phone = (select nvl2(p_phone, p_phone, (select phone from employees where id = p_id)) from dual),
-        salary = (select nvl2(p_salary, p_salary, (select salary from employees where id = p_id)) from dual),
-        on_vacation = (select nvl2(p_on_vacation, p_on_vacation, (select on_vacation from employees where id = p_id)) from dual)
+    SET auth_data = nvl(p_auth_data, auth_data),
+        person_id = nvl(p_person_id, person_id),
+        hire_date = nvl(to_date(TRIM(p_hire_date), 'dd.mm.yyyy'), hire_date),
+        education = nvl(p_education, education),
+        phone = nvl(p_phone, phone),
+        salary = nvl(p_salary, salary),
+        on_vacation = nvl(TRIM(p_on_vacation), on_vacation)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1114,9 +1133,23 @@ CREATE OR REPLACE PROCEDURE create_department
     p_dep_manager in DEPARTMENTS.department_manager%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
-    INSERT INTO DEPARTMENTS(department_name, department_manager) VALUES (p_dep_name, p_dep_manager);
+    IF p_dep_name IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_dep_manager IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    INSERT INTO DEPARTMENTS(department_name, department_manager) VALUES (TRIM(p_dep_name), p_dep_manager);
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1130,10 +1163,13 @@ CREATE OR REPLACE PROCEDURE update_department
 IS
 BEGIN
     UPDATE DEPARTMENTS
-    SET department_name = (select nvl2(p_dep_name, p_dep_name, (select department_name from departments where id = p_id)) from dual),
-        department_manager = (select nvl2(p_dep_manager, p_dep_manager, (select department_manager from departments where id = p_id)) from dual)
+    SET department_name = nvl(TRIM(p_dep_name), department_name),
+        department_manager = nvl(p_dep_manager, department_manager)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1160,10 +1196,28 @@ CREATE OR REPLACE PROCEDURE create_position
     p_pos_type in POSITIONS.position_type%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF p_pos_name IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_dep_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_pos_type) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
     INSERT INTO POSITIONS(position_name, department_id, position_type)
-    VALUES (p_pos_name, p_dep_id, p_pos_type);
+    VALUES (TRIM(p_pos_name), p_dep_id, p_pos_type);
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1178,11 +1232,14 @@ CREATE OR REPLACE PROCEDURE update_position
 IS
 BEGIN
     UPDATE POSITIONS
-    SET position_name = (select nvl2(p_pos_name, p_pos_name, (select position_name from positions where id = p_id)) from dual),
-        department_id = (select nvl2(p_dep_id, p_dep_id, (select department_id from positions where id = p_id)) from dual),
-        position_type = (select nvl2(p_pos_type, p_pos_type, (select position_type from positions where id = p_id)) from dual)
+    SET position_name = nvl(TRIM(p_pos_name), position_name),
+        department_id = nvl(p_dep_id, department_id),
+        position_type = nvl(TRIM(p_pos_type), position_type)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1208,9 +1265,24 @@ CREATE OR REPLACE PROCEDURE create_branch
     p_br_manager in BRANCHES.branch_manager%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF p_addr_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_br_manager IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+
+
     INSERT INTO BRANCHES(address_id, branch_manager) VALUES (p_addr_id, p_br_manager);
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1224,10 +1296,13 @@ CREATE OR REPLACE PROCEDURE update_branch
 IS
 BEGIN
     UPDATE BRANCHES
-    SET address_id = (select nvl2(p_addr_id, p_addr_id, (select address_id from branches where id = p_id)) from dual),
-        branch_manager = (select nvl2(p_br_manager, p_br_manager, (select branch_manager from branches where id = p_id)) from dual)
+    SET address_id = nvl(p_addr_id, address_id),
+        branch_manager = nvl(p_br_manager, branch_manager)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1253,9 +1328,23 @@ CREATE OR REPLACE PROCEDURE create_branch_department
     p_dep_id in BRANCH_DEPARTMENT.department_id%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF p_br_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_dep_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+
     INSERT INTO BRANCH_DEPARTMENT(branch_id, department_id) VALUES (p_br_id, p_dep_id);
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1269,10 +1358,13 @@ CREATE OR REPLACE PROCEDURE update_branch_department
 IS
 BEGIN
     UPDATE BRANCH_DEPARTMENT
-    SET branch_id = (select nvl2(p_br_id, p_br_id, (select branch_id from branch_department where id = p_id)) from dual),
-        department_id = (select nvl2(p_dep_id, p_dep_id, (select department_id from branch_department where id = p_id)) from dual)
+    SET branch_id = nvl(p_br_id, branch_id),
+        department_id = nvl(p_dep_id, department_id)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1298,9 +1390,24 @@ CREATE OR REPLACE PROCEDURE create_employee_position
     p_pos_id in EMPLOYEE_POSITION.position_id%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF p_pos_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_emp_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+
+
     INSERT INTO EMPLOYEE_POSITION(employee_id, position_id) VALUES (p_emp_id, p_pos_id);
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1314,10 +1421,13 @@ CREATE OR REPLACE PROCEDURE update_employee_position
 IS
 BEGIN
     UPDATE EMPLOYEE_POSITION
-    SET employee_id = (select nvl2(p_emp_id, p_emp_id, (select employee_id from employee_position where id = p_id)) from dual),
-        position_id = (select nvl2(p_pos_id, p_pos_id, (select position_id from employee_position where id = p_id)) from dual)
+    SET employee_id = nvl(p_emp_id, employee_id),
+        position_id = nvl(p_pos_id, position_id)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1343,10 +1453,24 @@ CREATE OR REPLACE PROCEDURE create_talon
     p_emp_id in TALONS.employee_id%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF p_t_date IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_emp_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
     INSERT INTO TALONS(talon_date, employee_id, patient_id)
-    VALUES (to_date(p_t_date, 'DD.MM.YYYY HH24:MI'), p_emp_id, null);
+    VALUES (to_date(TRIM(p_t_date), 'DD.MM.YYYY HH24:MI'), p_emp_id, null);
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1361,11 +1485,14 @@ CREATE OR REPLACE PROCEDURE update_talon
 IS
 BEGIN
     UPDATE TALONS
-    SET talon_date = (select nvl2(p_t_date, to_date(p_t_date, 'dd.mm.yyyy HH24:MI'), (select talon_date from talons where id = p_id)) from dual),
-        employee_id = (select nvl2(p_emp_id, p_emp_id, (select employee_id from talons where id = p_id)) from dual),
-        patient_id = (select nvl2(p_patient_id, p_patient_id, (select patient_id from talons where id = p_id)) from dual)
+    SET talon_date = nvl(to_date(TRIM(p_t_date), 'dd.mm.yyyy HH24:MI'), talon_date),
+        employee_id = nvl(p_emp_id, employee_id),
+        patient_id = nvl(p_patient_id, patient_id)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1391,10 +1518,24 @@ CREATE OR REPLACE PROCEDURE create_supplier
     p_supplier_country in SUPPLIERS.supplier_country%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF TRIM(p_supplier_name) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_supplier_country) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
     INSERT INTO SUPPLIERS(supplier_name, supplier_country)
-    VALUES (p_supplier_name, p_supplier_country);
+    VALUES (TRIM(p_supplier_name), TRIM(p_supplier_country));
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1408,10 +1549,13 @@ CREATE OR REPLACE PROCEDURE update_supplier
 IS
 BEGIN
     UPDATE SUPPLIERS
-    SET supplier_name = (select nvl2(p_supplier_name, p_supplier_name, (select supplier_name from suppliers where id = p_id)) from dual),
-        supplier_country = (select nvl2(p_supplier_country, p_supplier_country, (select supplier_country from suppliers where id = p_id)) from dual)
+    SET supplier_name = nvl(TRIM(p_supplier_name), supplier_name),
+        supplier_country = nvl(TRIM(p_supplier_country), supplier_country)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1440,10 +1584,36 @@ CREATE OR REPLACE PROCEDURE create_drug
     p_supplier_id in PHARMACY.supplier_id%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF TRIM(p_drug) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_price IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_stock IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_need_recipe) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_supplier_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+
     INSERT INTO PHARMACY(drug, price, stock, need_recipe, supplier_id)
-    VALUES (p_drug, p_price, p_stock, p_need_recipe, p_supplier_id);
+    VALUES (TRIM(p_drug), p_price, p_stock, TRIM(p_need_recipe), p_supplier_id);
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1460,13 +1630,16 @@ CREATE OR REPLACE PROCEDURE update_drug
 IS
 BEGIN
     UPDATE PHARMACY
-    SET drug = (select nvl2(p_drug, p_drug, (select drug from pharmacy where id = p_id)) from dual),
-        price = (select nvl2(p_price, p_price, (select price from pharmacy where id = p_id)) from dual),
-        stock = (select nvl2(p_stock, p_stock, (select stock from pharmacy where id = p_id)) from dual),
-        need_recipe = (select nvl2(p_need_recipe, p_need_recipe, (select need_recipe from pharmacy where id = p_id)) from dual),
-        supplier_id = (select nvl2(p_supplier_id, p_supplier_id, (select supplier_id from pharmacy where id = p_id)) from dual)
+    SET drug = nvl(TRIM(p_drug), drug),
+        price = nvl(p_price, price),
+        stock = nvl(p_stock, stock),
+        need_recipe = nvl(TRIM(p_need_recipe), need_recipe),
+        supplier_id = nvl(p_supplier_id, supplier_id)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1493,10 +1666,28 @@ CREATE OR REPLACE PROCEDURE create_comment
     p_comment_text in COMMENTS.comment_text%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF p_user_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_employee_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_comment_text) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
     INSERT INTO COMMENTS(user_id, employee_id, comment_text)
-    VALUES (p_user_id, p_employee_id, p_comment_text);
+    VALUES (p_user_id, p_employee_id, TRIM(p_comment_text));
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1511,11 +1702,14 @@ CREATE OR REPLACE PROCEDURE update_comment
 IS
 BEGIN
     UPDATE COMMENTS
-    SET user_id = (select nvl2(p_user_id, p_user_id, (select user_id from comments where id = p_id)) from dual),
-        employee_id = (select nvl2(p_employee_id, p_employee_id, (select employee_id from comments where id = p_id)) from dual),
-        comment_text = (select nvl2(p_comment_text, p_comment_text, (select comment_text from comments where id = p_id)) from dual)
+    SET user_id = nvl(p_user_id, user_id),
+        employee_id = nvl(p_employee_id, employee_id),
+        comment_text = nvl(TRIM(p_comment_text), comment_text)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1542,10 +1736,28 @@ CREATE OR REPLACE PROCEDURE create_listitem
     p_price in PRICELIST.price%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF p_pos_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_service) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_price IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+
     INSERT INTO PRICELIST(position_id, service, price)
-    VALUES (p_pos_id, p_service, p_price);
+    VALUES (p_pos_id, TRIM(p_service), p_price);
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1560,11 +1772,14 @@ CREATE OR REPLACE PROCEDURE update_listitem
 IS
 BEGIN
     UPDATE PRICELIST
-    SET position_id = (select nvl2(p_pos_id, p_pos_id, (select position_id from pricelist where id = p_id)) from dual),
-        service = (select nvl2(p_service, p_service, (select service from pricelist where id = p_id)) from dual),
-        price = (select nvl2(p_price, p_price, (select price from pricelist where id = p_id)) from dual)
+    SET position_id = nvl(p_pos_id, position_id),
+        service = nvl(TRIM(p_service), service),
+        price = nvl(p_price, price)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1594,14 +1809,42 @@ CREATE OR REPLACE PROCEDURE create_treatment
     p_recomms in TREATMENTS.recommendations%TYPE
 )
 IS
+    empty_parameter_ex EXCEPTION;
 BEGIN
+    IF p_emp_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_patient_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_start) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_diagnosis) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_info) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF TRIM(p_recomms) IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
     INSERT INTO TREATMENTS(employee_id, patient_id, start_of_treatment, end_of_treatment, diagnosis, treatment_info, recommendations)
-    VALUES (p_emp_id, p_patient_id, to_date(p_start, 'dd.mm.yyyy hh24:mi'), null, p_diagnosis, p_info, p_recomms);
+    VALUES (p_emp_id, p_patient_id, to_date(TRIM(p_start), 'dd.mm.yyyy hh24:mi'), null, TRIM(p_diagnosis), TRIM(p_info), TRIM(p_recomms));
     COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
-
-select * from treatments;
 
 --/
 CREATE OR REPLACE PROCEDURE update_treatment
@@ -1618,15 +1861,18 @@ CREATE OR REPLACE PROCEDURE update_treatment
 IS
 BEGIN
     UPDATE TREATMENTS
-    SET employee_id = (select nvl2(p_emp_id, p_emp_id, (select employee_id from treatments where id = p_id)) from dual),
-        patient_id = (select nvl2(p_patient_id, p_patient_id, (select patient_id from treatments where id = p_id)) from dual),
-        start_of_treatment = (select nvl2(p_start, to_date(p_start, 'dd.mm.yyyy hh24:mi'), (select start_of_treatment from treatments where id = p_id)) from dual),
-        end_of_treatment = (select nvl2(p_end, to_date(p_end, 'dd.mm.yyyy hh24:mi'), (select end_of_treatment from treatments where id = p_id)) from dual),
-        diagnosis = (select nvl2(p_diagnosis, p_diagnosis, (select diagnosis from treatments where id = p_id)) from dual),
-        treatment_info = (select nvl2(p_info, p_info, (select treatment_info from treatments where id = p_id)) from dual),
-        recommendations = (select nvl2(p_recomms, p_recomms, (select recommendations from treatments where id = p_id)) from dual)
+    SET employee_id = nvl(p_emp_id, employee_id),
+        patient_id = nvl(p_patient_id, patient_id),
+        start_of_treatment = nvl(to_date(TRIM(p_start), 'dd.mm.yyyy hh24:mi'), start_of_treatment),
+        end_of_treatment = nvl(to_date(TRIM(p_end), 'dd.mm.yyyy hh24:mi'), end_of_treatment),
+        diagnosis = nvl(TRIM(p_diagnosis), diagnosis),
+        treatment_info = nvl(TRIM(p_info), treatment_info),
+        recommendations = nvl(TRIM(p_recomms), recommendations)
     WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 --/
 
@@ -1643,16 +1889,16 @@ END;
 --/
 
 --/
-CREATE OR REPLACE FUNCTION hash_password
-(
-    f_password IN CLOB
-)
-RETURN RAW
-IS
-    hash RAW(32);
+CREATE OR REPLACE FUNCTION hash_password(f_password IN varchar2)
+    RETURN RAW
+AS
 BEGIN
-    hash := dbms_crypto.hash(f_password, dbms_crypto.hash_sh256);
-    RETURN hash;
+    IF f_password IS NULL
+    THEN
+        RETURN NULL;
+    ELSE
+        RETURN sys.dbms_crypto.hash(utl_raw.cast_to_raw(f_password), sys.dbms_crypto.hash_sh256);
+    END IF;
 END;
 --/
 
@@ -1660,7 +1906,7 @@ END;
 CREATE OR REPLACE FUNCTION compare_passwords
 (
     user_id in USERS.id%TYPE,
-    password in CLOB
+    password in VARCHAR2
 )
 RETURN NUMBER
 IS
@@ -1669,8 +1915,9 @@ IS
 BEGIN
     SELECT password INTO user_password FROM USERS WHERE id = user_id;
 
-    hash := dbms_crypto.hash(password, dbms_crypto.hash_sh256);
+    hash := hash_password(TRIM(password));
     RETURN DBMS_LOB.compare(hash, user_password);
 END;
 --/
+
 
