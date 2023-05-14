@@ -33,17 +33,31 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <?php
     NavBar::begin([
         'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => ['class' => 'navbar-expand-md navbar-dark  navbar-fixed-top']
+        'brandUrl' => '/admin/users',
+        'options' => ['class' => 'navbar-dark navbar-fixed-top']
     ]);
     echo Nav::widget([
-        'options' => ['class' => 'navbar-nav ms-auto'],
+        'options' => ['class' => 'navbar-nav ms-auto navbar-grid'],
         'items' => [
-            ['label' => 'Заказать талон', 'url' => ['/index']],
-            ['label' => 'Прайслист', 'url' => ['/pricelist']],
-            (Yii::$app->user->isGuest)
-                ? (['label' => 'Войти', 'url' => ['/login']])
-                :  (['label' => 'Аккаунт', 'url' => ['/user']]),
+            ['label' => 'Users', 'url' => ['/admin/users']],
+            ['label' => 'Addresses', 'url' => ['/admin/addresses']],
+            ['label' => 'Passports', 'url' => ['/admin/passports']],
+            ['label' => 'Persons', 'url' => ['/admin/persons']],
+            ['label' => 'Patients', 'url' => ['/admin/patients']],
+            ['label' => 'Roles', 'url' => ['/admin/roles']],
+            ['label' => 'Employees', 'url' => ['/admin/employees']],
+            ['label' => 'Departments', 'url' => ['/admin/departments']],
+            ['label' => 'DepartmentEmployee', 'url' => ['/admin/department-employee']],
+            ['label' => 'Branches', 'url' => ['/admin/branches']],
+            ['label' => 'Branch Department', 'url' => ['/admin/branch-department']],
+            ['label' => 'Suppliers', 'url' => ['/admin/suppliers']],
+            ['label' => 'Pharmacy', 'url' => ['/admin/pharmacy']],
+            ['label' => 'Talons', 'url' => ['/admin/talons']],
+            ['label' => 'Treatments', 'url' => ['/admin/treatments']],
+            ['label' => 'Pricelist', 'url' => ['/admin/pricelist']],
+            ['label' => 'Person Address', 'url' => ['/admin/person-address']],
+            ['label' => 'Positions', 'url' => ['/admin/positions']],
+            ['label' => 'Comments', 'url' => ['/admin/comments']],
         ]
     ]);
     NavBar::end();
@@ -64,7 +78,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <div class="container">
         <div class="row text-muted">
             <div class="col-md-6 text-center text-md-start">&copy; СТАРОМЕД <?= date('Y') ?></div>
-            <div class="col-md-6 text-center text-md-end">Ваше здоровье в наших руках</div>
+            <div class="col-md-6 text-center text-md-end">Admin Panel</div>
         </div>
     </div>
 </footer>

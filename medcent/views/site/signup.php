@@ -7,11 +7,13 @@
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
-$this->title = 'СТАРОМЕД - Авторизация';
-$this->params['breadcrumbs'][] = "Авторизация";
+$this->title = 'СТАРОМЕД - Регистрация';
+$this->params['breadcrumbs'][] = "Регистрация";
 ?>
-<div class="site-login">
-    <h1><?= Html::encode("Авторизация") ?></h1>
+<div class="site-signup">
+    <h1><?= Html::encode("Регистрация") ?></h1>
+
+    <p>Please fill out the following fields to signup:</p>
 
     <?php $form = ActiveForm::begin([
         'id' => 'login-form',
@@ -28,14 +30,10 @@ $this->params['breadcrumbs'][] = "Авторизация";
 
         <?= $form->field($model, 'password')->passwordInput() ?>
 
-        <?= $form->field($model, 'rememberMe')->checkbox([
-            'template' => "<div class=\"offset-lg-0 col-lg-3 custom-control custom-checkbox\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",
-        ]) ?>
-
         <div class="form-group">
             <div class="offset-lg-0 col-lg-11">
-                <?= Html::submitButton('Войти', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-                <p id="to-signup"><a href="/signup">Зарегистрироваться</a></p>
+                <?= Html::submitButton('Создать аккаунт', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+                <p id="to-login"><a href="/login">Уже есть аккаунт? Войти</a></p>
             </div>
         </div>
 

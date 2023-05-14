@@ -39,11 +39,18 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav ms-auto'],
         'items' => [
-            ['label' => 'Заказать талон', 'url' => ['/index']],
-            ['label' => 'Прайслист', 'url' => ['/pricelist']],
-            (Yii::$app->user->isGuest)
-                ? (['label' => 'Войти', 'url' => ['/login']])
-                :  (['label' => 'Аккаунт', 'url' => ['/user']]),
+            ['label' => 'Пациенты', 'url' => ['/index']],
+            ['label' => 'Аккаунт', 'url' => ['/user']],
+            (
+                '<li>'
+                . Html::beginForm(['/site/logout'], 'post')
+                . Html::submitButton(
+                    'Выйти',
+                    ['class' => 'btn btn-link text-decoration-none logout']
+                )
+                . Html::endForm()
+                . '</li>'
+            ),
         ]
     ]);
     NavBar::end();
