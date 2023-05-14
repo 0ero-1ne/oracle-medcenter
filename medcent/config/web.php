@@ -21,7 +21,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\Users',
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
@@ -48,9 +48,23 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'login' => 'site/login',
+                'index' => 'site/index',
+                'admin' => 'admin/default/index',
+                'signup' => 'site/signup'
             ],
         ],
     ],
+
+    'modules' => [
+        'admin' => [
+            'class' => 'app\modules\admin\Admin',
+        ],
+        'user' => [
+            'class' => 'app\modules\user\User',
+        ],
+    ],
+
     'params' => $params,
 ];
 

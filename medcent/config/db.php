@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'oci:dbname=//localhost:1521/ORCL;charset=AL32UTF8',
+    'dsn' => 'oci:dbname=//localhost:1521/MEDCENT;charset=AL32UTF8',
     'username' => 'system',
-    'password' => '$Ad0129$',
+    'password' => '$Am0129$',
 
     // Schema cache options (for production environment)
     //'enableSchemaCache' => true,
