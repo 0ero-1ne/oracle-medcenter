@@ -33,6 +33,7 @@ class PersonAddress extends \yii\db\ActiveRecord
             [['PERSON_ID', 'ADDRESS_ID'], 'required'],
             [['ID'], 'unique'],
             [['PERSON_ID'], 'exist', 'skipOnError' => true, 'targetClass' => PERSONS::class, 'targetAttribute' => ['PERSON_ID' => 'ID']],
+            [['ADDRESS_ID'], 'exist', 'skipOnError' => true, 'targetClass' => ADDRESSES::class, 'targetAttribute' => ['ADDRESS_ID' => 'ID']],
         ];
     }
 

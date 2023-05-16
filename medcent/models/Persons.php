@@ -40,7 +40,7 @@ class Persons extends \yii\db\ActiveRecord
             [['ID', 'PASSPORT_ID'], 'integer'],
             ['PASSPORT_ID','unique'],
             [['FIRST_NAME', 'SECOND_NAME', 'LAST_NAME'], 'string', 'max' => 64],
-            [['BIRTH_DATE'], 'date', 'format' => 'dd-M-Y'],
+            //[['BIRTH_DATE'], 'date', 'format' => 'dd-M-Y H:i'],
             [['GENDER'], 'string', 'max' => 1],
             [['ID'], 'unique'],
             [['PASSPORT_ID'], 'exist', 'skipOnError' => true, 'targetClass' => PASSPORTS::class, 'targetAttribute' => ['PASSPORT_ID' => 'ID']],
@@ -58,7 +58,7 @@ class Persons extends \yii\db\ActiveRecord
             'SECOND_NAME' => 'Second Name',
             'LAST_NAME' => 'Last Name',
             'PASSPORT_ID' => 'Passport ID',
-            'BIRTH_DATE' => 'Birth Date (DD-MON-YYYY)',
+            'BIRTH_DATE' => 'Birth Date',
             'GENDER' => 'Gender',
         ];
     }

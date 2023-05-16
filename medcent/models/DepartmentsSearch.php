@@ -17,7 +17,7 @@ class DepartmentsSearch extends Departments
     public function rules()
     {
         return [
-            [['ID', 'DEPARTMENT_MANAGER'], 'integer'],
+            [['ID', 'ADDRESS_ID', 'DEPARTMENT_MANAGER'], 'integer'],
             [['DEPARTMENT_NAME'], 'safe'],
         ];
     }
@@ -59,6 +59,7 @@ class DepartmentsSearch extends Departments
         // grid filtering conditions
         $query->andFilterWhere([
             'ID' => $this->ID,
+            'ADDRESS_ID' => $this->ADDRESS_ID,
             'DEPARTMENT_MANAGER' => $this->DEPARTMENT_MANAGER,
         ]);
 

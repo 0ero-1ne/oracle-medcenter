@@ -45,11 +45,11 @@ class Addresses extends \yii\db\ActiveRecord
     {
         return [
             'ID' => 'ID',
-            'REGION' => 'Region',
-            'TOWN' => 'Town',
-            'STREET' => 'Street',
-            'HOUSE_NUMBER' => 'House Number',
-            'FLAT' => 'Flat',
+            'REGION' => 'Область',
+            'TOWN' => 'Населённый пункт',
+            'STREET' => 'Улица',
+            'HOUSE_NUMBER' => 'Номер дома',
+            'FLAT' => 'Квартира (если есть)',
         ];
     }
 }

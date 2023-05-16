@@ -31,8 +31,8 @@ class Talons extends \yii\db\ActiveRecord
     {
         return [
             [['ID', 'EMPLOYEE_ID', 'PATIENT_ID'], 'integer'],
-            [['EMPLOYEE_ID'], 'required'],
-            [['TALON_DATE'], 'string', 'max' => 7],
+            [['EMPLOYEE_ID','TALON_DATE'], 'required'],
+            [['TALON_DATE'], 'string', 'max' => 16],
             [['ID'], 'unique'],
             [['PATIENT_ID'], 'exist', 'skipOnError' => true, 'targetClass' => PATIENTS::class, 'targetAttribute' => ['PATIENT_ID' => 'ID']],
         ];

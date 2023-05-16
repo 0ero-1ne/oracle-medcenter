@@ -30,7 +30,7 @@ class Suppliers extends \yii\db\ActiveRecord
     {
         return [
             [['ID'], 'integer'],
-            [['ID', 'SUPPLIER__NAME','SUPPLIER_COUNTRY'],'required'],
+            [['ID', 'SUPPLIER_NAME','SUPPLIER_COUNTRY'],'required'],
             [['SUPPLIER_NAME'], 'string', 'max' => 256],
             [['SUPPLIER_COUNTRY'], 'string', 'max' => 64],
             [['ID','SUPPLIER_NAME'], 'unique'],

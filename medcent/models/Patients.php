@@ -34,9 +34,11 @@ class Patients extends \yii\db\ActiveRecord
         return [
             [['ID', 'AUTH_DATA', 'PERSON_ID'], 'integer'],
             [['AUTH_DATA', 'PERSON_ID', 'PHONE'], 'required'],
-            [['PHONE'], 'string', 'max' => 20],
+            [['PHONE'], 'match', 'pattern' => '/^(80)([ ]{1})(\(29\)|\(44\)|\(25\)|\(33\))([ ]{1})([0-9]{3})([-]{1})([0-9]{2})([-]{1})([0-9]{2})$/','message' => 'Phone pattern: 80 (25/29/33/44) xxx-xx-xx'],
             [['ID'], 'unique'],
+            [['PHONE'], 'unique', 'message' => 'Please, type another phone'],
             [['PERSON_ID'], 'exist', 'skipOnError' => true, 'targetClass' => PERSONS::class, 'targetAttribute' => ['PERSON_ID' => 'ID']],
+            [['AUTH_DATA'], 'exist', 'skipOnError' => true, 'targetClass' => USERS::class, 'targetAttribute' => ['AUTH_DATA' => 'ID']]
         ];
     }
 

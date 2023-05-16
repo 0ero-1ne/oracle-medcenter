@@ -31,7 +31,7 @@ class Comments extends \yii\db\ActiveRecord
     {
         return [
             [['ID', 'USER_ID', 'EMPLOYEE_ID'], 'integer'],
-            [['USER_ID', 'EMPLOYEE_ID'], 'required'],
+            [['USER_ID', 'EMPLOYEE_ID', 'COMMENT_TEXT'], 'required'],
             [['COMMENT_TEXT'], 'string', 'max' => 1024],
             [['ID'], 'unique'],
             [['USER_ID'], 'exist', 'skipOnError' => true, 'targetClass' => USERS::class, 'targetAttribute' => ['USER_ID' => 'ID']],

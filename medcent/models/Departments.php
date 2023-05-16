@@ -9,11 +9,10 @@ use Yii;
  *
  * @property int $ID
  * @property string $DEPARTMENT_NAME
- * @property int $DEPARTMENT_MANAGER
+ * @property int $ADDRESS_ID
+ * @property int|null $DEPARTMENT_MANAGER
  *
- * @property BRANCHDEPARTMENT[] $bRANCHDEPARTMENTs
  * @property EMPLOYEES $dEPARTMENTMANAGER
- * @property POSITIONS[] $pOSITIONSs
  */
 class Departments extends \yii\db\ActiveRecord
 {
@@ -31,11 +30,12 @@ class Departments extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['ID', 'DEPARTMENT_MANAGER'], 'integer'],
-            [['DEPARTMENT_NAME','ID'], 'required'],
+            [['ID', 'ADDRESS_ID', 'DEPARTMENT_MANAGER'], 'integer'],
+            [['ADDRESS_ID', 'DEPARTMENT_NAME'], 'required'],
             [['DEPARTMENT_NAME'], 'string', 'max' => 256],
             [['ID'], 'unique'],
             [['DEPARTMENT_MANAGER'], 'exist', 'skipOnError' => true, 'targetClass' => EMPLOYEES::class, 'targetAttribute' => ['DEPARTMENT_MANAGER' => 'ID']],
+            [['ADDRESS_ID'], 'exist', 'skipOnError' => true, 'targetClass' => ADDRESSES::class, 'targetAttribute' => ['ADDRESS_ID' => 'ID']],
         ];
     }
 
@@ -47,18 +47,9 @@ class Departments extends \yii\db\ActiveRecord
         return [
             'ID' => 'ID',
             'DEPARTMENT_NAME' => 'Department Name',
+            'ADDRESS_ID' => 'Address ID',
             'DEPARTMENT_MANAGER' => 'Department Manager',
         ];
-    }
-
-    /**
-     * Gets query for [[BRANCHDEPARTMENTs]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBRANCHDEPARTMENTs()
-    {
-        return $this->hasMany(BRANCHDEPARTMENT::class, ['DEPARTMENT_ID' => 'ID']);
     }
 
     /**
@@ -69,15 +60,5 @@ class Departments extends \yii\db\ActiveRecord
     public function getDEPARTMENTMANAGER()
     {
         return $this->hasOne(EMPLOYEES::class, ['ID' => 'DEPARTMENT_MANAGER']);
-    }
-
-    /**
-     * Gets query for [[POSITIONSs]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPOSITIONSs()
-    {
-        return $this->hasMany(POSITIONS::class, ['DEPARTMENT_ID' => 'ID']);
     }
 }

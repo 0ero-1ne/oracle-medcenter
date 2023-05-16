@@ -31,7 +31,7 @@ class Pricelist extends \yii\db\ActiveRecord
     {
         return [
             [['ID', 'POSITION_ID'], 'integer'],
-            [['POSITION_ID', 'PRICE'], 'required'],
+            [['POSITION_ID', 'PRICE', 'SERVICE'], 'required'],
             [['PRICE'], 'number'],
             [['SERVICE'], 'string', 'max' => 256],
             [['ID'], 'unique'],

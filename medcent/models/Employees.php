@@ -40,9 +40,9 @@ class Employees extends \yii\db\ActiveRecord
             [['ID', 'AUTH_DATA', 'PERSON_ID', 'POSITION_ID'], 'integer'],
             [['AUTH_DATA', 'PERSON_ID', 'POSITION_ID', 'SALARY','PHONE','EDUCATION','HIRE_DATE','ON_VACATION','ID'], 'required'],
             [['SALARY'], 'number'],
-            [['HIRE_DATE'], 'date', 'format' => 'dd-M-Y'],
+            //[['HIRE_DATE'], 'date', 'format' => 'd.m.Y H:i:s'],
             [['EDUCATION'], 'string', 'max' => 256],
-            [['PHONE'], 'string', 'max' => 20],
+            [['PHONE'], 'match', 'pattern' => '/^(80)([ ]{1})(\(29\)|\(44\)|\(25\)|\(33\))([ ]{1})([0-9]{3})([-]{1})([0-9]{2})([-]{1})([0-9]{2})$/','message' => 'Phone pattern: 80 (25/29/33/44) xxx-xx-xx'],
             [['ON_VACATION'], 'string', 'max' => 1],
             [['ID'], 'unique'],
             [['AUTH_DATA'], 'unique'],
@@ -69,16 +69,6 @@ class Employees extends \yii\db\ActiveRecord
             'SALARY' => 'Salary',
             'ON_VACATION' => 'On Vacation',
         ];
-    }
-
-    /**
-     * Gets query for [[BRANCHESs]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBRANCHESs()
-    {
-        return $this->hasMany(BRANCHES::class, ['BRANCH_MANAGER' => 'ID']);
     }
 
     /**

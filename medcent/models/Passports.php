@@ -32,6 +32,7 @@ class Passports extends \yii\db\ActiveRecord
     {
         return [
             [['ID'], 'integer'],
+            [['ID','PASSPORT_NUMBER','DATE_OF_ISSUE','DATE_OF_EXPIRY','AUTHORITY'],'required'],
             [['PASSPORT_NUMBER'], 'string', 'max' => 64],
             [['DATE_OF_ISSUE', 'DATE_OF_EXPIRY'], 'date', 'format' => 'dd-M-Y'],
             [['AUTHORITY'], 'string', 'max' => 256],
