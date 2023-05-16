@@ -51,7 +51,14 @@ $config = [
                 'login' => 'site/login',
                 'index' => 'site/index',
                 'admin' => 'admin/default/index',
-                'signup' => 'site/signup'
+                'signup' => 'site/signup',
+                'talons' => 'site/talons',
+                'user' => 'user/default/index',
+                '/user/patients' => 'user/default/patients',
+                '/user/patient/<id:\d+>' => 'user/default/patient',
+                '/user/update-person/<id:\d+>' => 'user/default/update-person',
+                '/user/add-address/<id:\d+>' => 'user/default/add-address',
+                '/user/add-patient' => 'user/default/add-patient'
             ],
         ],
     ],
