@@ -32,6 +32,7 @@ use yii\widgets\ActiveForm;
 
     <?php
         $suppliers = Suppliers::find()->asArray()->all();
+        $suppliersList = [];
 
         foreach ($suppliers as $supplier) {
             $suppliersList[$supplier['ID']] = $supplier['SUPPLIER_NAME'].' ('.$supplier['SUPPLIER_COUNTRY'].')';

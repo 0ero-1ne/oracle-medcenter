@@ -17,8 +17,6 @@ use yii\helpers\ArrayHelper;
        'id' => 'test-form',
     ]); ?>
 
-    <?= $form->field($model, 'ID')->textInput() ?>
-
     <?php
         $users = ArrayHelper::map(Users::find()->all(), 'ID', 'EMAIL');
     ?>
@@ -29,7 +27,7 @@ use yii\helpers\ArrayHelper;
         $persons = Persons::find()->asArray()->all();
         $personsItems = [];
         foreach ($persons as $person) {
-            $personsItems = [$person['ID'] => $person['FIRST_NAME'] . ' ' . $person['SECOND_NAME'] . ' ' . $person['LAST_NAME'] . ' ' . $person['BIRTH_DATE']];
+            $personsItems[$person['ID']] = $person['FIRST_NAME'] . ' ' . $person['SECOND_NAME'] . ' ' . $person['LAST_NAME'] . ' ' . $person['BIRTH_DATE'];
         }
     ?>
 

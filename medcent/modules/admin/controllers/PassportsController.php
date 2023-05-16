@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use Yii;
 use app\models\Passports;
 use app\models\PassportsSearch;
 use yii\web\Controller;
@@ -38,6 +39,16 @@ class PassportsController extends Controller
      */
     public function actionIndex()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         $searchModel = new PassportsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -55,6 +66,16 @@ class PassportsController extends Controller
      */
     public function actionView($ID)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($ID),
         ]);
@@ -67,6 +88,16 @@ class PassportsController extends Controller
      */
     public function actionCreate()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         $last_id = Passports::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Passports();
         $model->ID = $last_id + 1;
@@ -93,6 +124,16 @@ class PassportsController extends Controller
      */
     public function actionUpdate($ID)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         $model = $this->findModel($ID);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -113,6 +154,16 @@ class PassportsController extends Controller
      */
     public function actionDelete($ID)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+        
         $this->findModel($ID)->delete();
 
         return $this->redirect(['index']);

@@ -1,7 +1,9 @@
 <?php
 
+use app\models\Positions;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var app\models\Pricelist $model */
@@ -10,11 +12,15 @@ use yii\widgets\ActiveForm;
 
 <div class="pricelist-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+       'id' => 'test-form',
+    ]); ?>
 
-    <?= $form->field($model, 'ID')->textInput() ?>
+    <?php
+        $positions = Positions::find()->asArray()->all();
+    ?>
 
-    <?= $form->field($model, 'POSITION_ID')->textInput() ?>
+    <?= $form->field($model, 'POSITION_ID')->dropDownList(ArrayHelper::map($positions, 'ID', 'POSITION_NAME'), ['prompt' => 'Select position']) ?>
 
     <?= $form->field($model, 'SERVICE')->textInput(['maxlength' => true]) ?>
 

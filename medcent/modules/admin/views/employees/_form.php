@@ -18,8 +18,6 @@ use yii\helpers\ArrayHelper;
        'id' => 'test-form',
     ]); ?>
 
-    <?= $form->field($model, 'ID')->textInput() ?>
-
     <?php
         $users = ArrayHelper::map(Users::find()->all(), 'ID', 'EMAIL');
     ?>

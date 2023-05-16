@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use Yii;
 use app\models\Roles;
 use app\models\RolesSearch;
 use yii\web\Controller;
@@ -38,6 +39,16 @@ class RolesController extends Controller
      */
     public function actionIndex()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         $searchModel = new RolesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -55,6 +66,16 @@ class RolesController extends Controller
      */
     public function actionView($ROLE_NAME)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($ROLE_NAME),
         ]);
@@ -67,6 +88,16 @@ class RolesController extends Controller
      */
     public function actionCreate()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         $model = new Roles();
 
         if ($this->request->isPost) {
@@ -91,6 +122,16 @@ class RolesController extends Controller
      */
     public function actionUpdate($ROLE_NAME)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         $model = $this->findModel($ROLE_NAME);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -111,6 +152,16 @@ class RolesController extends Controller
      */
     public function actionDelete($ROLE_NAME)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+        
         $this->findModel($ROLE_NAME)->delete();
 
         return $this->redirect(['index']);

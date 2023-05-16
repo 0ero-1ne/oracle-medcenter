@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use Yii;
 use app\models\PersonAddress;
 use app\models\PersonAddressSearch;
 use yii\web\Controller;
@@ -38,6 +39,16 @@ class PersonAddressController extends Controller
      */
     public function actionIndex()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         $searchModel = new PersonAddressSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -55,6 +66,16 @@ class PersonAddressController extends Controller
      */
     public function actionView($ID)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($ID),
         ]);
@@ -67,11 +88,34 @@ class PersonAddressController extends Controller
      */
     public function actionCreate()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
+        $last_id = PersonAddress::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new PersonAddress();
+        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+            if ($model->load($this->request->post())) {
+                $perAdr = PersonAddress::findOne(['PERSON_ID' => $model->PERSON_ID, 'ADDRESS_ID' => $model->ADDRESS_ID]);
+                
+                if ($perAdr) {
+                    Yii::$app->getSession()->setFlash('error','Already exists');
+                    return $this->render('create', [
+                        'model' => $model
+                    ]);
+                }
+
+                if ($model->save()) {
+                    return $this->redirect(['view', 'ID' => $model->ID]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -91,10 +135,31 @@ class PersonAddressController extends Controller
      */
     public function actionUpdate($ID)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         $model = $this->findModel($ID);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'ID' => $model->ID]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $perAdr = PersonAddress::findOne(['PERSON_ID' => $model->PERSON_ID, 'ADDRESS_ID' => $model->ADDRESS_ID]);
+                
+            if ($perAdr) {
+                Yii::$app->getSession()->setFlash('error','Already exists');
+                return $this->render('update', [
+                    'model' => $model
+                ]);
+            }
+
+            if ($model->save()) {
+                return $this->redirect(['view', 'ID' => $model->ID]);
+            }
         }
 
         return $this->render('update', [
@@ -111,6 +176,16 @@ class PersonAddressController extends Controller
      */
     public function actionDelete($ID)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+        
         $this->findModel($ID)->delete();
 
         return $this->redirect(['index']);

@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use Yii;
 use app\models\Patients;
 use app\models\PatientsSearch;
 use yii\web\Controller;
@@ -38,6 +39,16 @@ class PatientsController extends Controller
      */
     public function actionIndex()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         $searchModel = new PatientsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -55,6 +66,16 @@ class PatientsController extends Controller
      */
     public function actionView($ID)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($ID),
         ]);
@@ -67,18 +88,38 @@ class PatientsController extends Controller
      */
     public function actionCreate()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
         $last_id = Patients::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Patients();
         $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+            if ($model->load($this->request->post())) {
+                $patient = Patients::find()->where(['AUTH_DATA' => $model->AUTH_DATA])->andWhere(['PERSON_ID' => $model->PERSON_ID])->one();
+                
+                if ($patient) {
+                    Yii::$app->getSession()->setFlash('error', 'Такой пациент уже существует');
+                    return $this->render('create', [
+                        'model' => $model
+                    ]);
+                }
+
+                if ($model->save()) {
+                    return $this->redirect(['view', 'ID' => $model->ID]);
+                }
             }
         } else {
             $model->loadDefaultValues();
         }
-
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -93,10 +134,40 @@ class PatientsController extends Controller
      */
     public function actionUpdate($ID)
     {
-        $model = $this->findModel($ID);
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'ID' => $model->ID]);
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+
+        $model = $this->findModel($ID);
+        $oldAuth = $model->AUTH_DATA;
+        $oldPerson = $model->PERSON_ID;
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if (($oldAuth == $model->AUTH_DATA) && ($oldPerson == $model->PERSON_ID)) {
+                if ($model->save()) {
+                    return $this->redirect(['view', 'ID' => $model->ID]);
+                }
+            }
+            
+            if ($oldAuth != $model->AUTH_DATA || $oldPerson != $model->PERSON_ID) {
+                $patient = Patients::find()->where(['AUTH_DATA' => $model->AUTH_DATA])->andWhere(['PERSON_ID' => $model->PERSON_ID])->one();
+                if ($patient) {
+                    Yii::$app->getSession()->setFlash('error', 'Such pacient is already exists');
+                    return $this->render('update', [
+                        'model' => $model
+                    ]);
+                }
+            }
+
+            if ($model->save()) {
+                return $this->redirect(['view', 'ID' => $model->ID]);
+            }
         }
 
         return $this->render('update', [
@@ -113,6 +184,16 @@ class PatientsController extends Controller
      */
     public function actionDelete($ID)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $isAdmin = Yii::$app->user->identity->USER_ROLE === "manager";
+
+        if (!Yii::$app->user->isGuest && !$isAdmin) {
+            return $this->goHome();
+        }
+        
         $this->findModel($ID)->delete();
 
         return $this->redirect(['index']);

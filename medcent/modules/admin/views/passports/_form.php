@@ -14,8 +14,6 @@ use yii\widgets\ActiveForm;
        'id' => 'test-form',
     ]); ?>
 
-    <?= $form->field($model, 'ID')->textInput() ?>
-
     <?= $form->field($model, 'PASSPORT_NUMBER')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'DATE_OF_ISSUE')->textInput(['maxlength' => true]) ?>

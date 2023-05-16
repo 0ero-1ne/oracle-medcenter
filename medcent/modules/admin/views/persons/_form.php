@@ -16,8 +16,6 @@ use yii\helpers\ArrayHelper;
        'id' => 'test-form',
     ]); ?>
 
-    <?= $form->field($model, 'ID')->textInput() ?>
-
     <?= $form->field($model, 'FIRST_NAME')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'SECOND_NAME')->textInput(['maxlength' => true]) ?>

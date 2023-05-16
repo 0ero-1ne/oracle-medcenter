@@ -16,8 +16,6 @@ use yii\helpers\ArrayHelper;
        'id' => 'test-form',
     ]); ?>
 
-    <?= $form->field($model, 'ID')->textInput() ?>
-
     <?php
         $roles = ArrayHelper::map(Roles::find()->asArray()->all(), 'ROLE_NAME', 'ROLE_NAME');
     ?>
