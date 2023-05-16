@@ -48,8 +48,6 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             ['label' => 'Employees', 'url' => ['/admin/employees']],
             ['label' => 'Departments', 'url' => ['/admin/departments']],
             ['label' => 'DepartmentEmployee', 'url' => ['/admin/department-employee']],
-            ['label' => 'Branches', 'url' => ['/admin/branches']],
-            ['label' => 'Branch Department', 'url' => ['/admin/branch-department']],
             ['label' => 'Suppliers', 'url' => ['/admin/suppliers']],
             ['label' => 'Pharmacy', 'url' => ['/admin/pharmacy']],
             ['label' => 'Talons', 'url' => ['/admin/talons']],

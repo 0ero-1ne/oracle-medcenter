@@ -39,7 +39,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav ms-auto'],
         'items' => [
-            ['label' => 'Заказать талон', 'url' => ['/index']],
+            ['label' => 'Заказать талон', 'url' => ['/talons']],
             ['label' => 'Прайслист', 'url' => ['/pricelist']],
             (Yii::$app->user->isGuest)
                 ? (['label' => 'Войти', 'url' => ['/login']])
