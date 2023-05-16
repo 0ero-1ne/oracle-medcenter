@@ -10,6 +10,10 @@ main > .container {
     margin-bottom:  100px;
 }
 
+#main .patients {
+    margin-bottom: 50px;
+}
+
 .row .how-img 
 {
     display: flex;
@@ -173,4 +177,158 @@ a.desc:after {
 #to-login a:hover {
     color: black;
     text-decoration: underline;
+}
+
+.row.talons {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 450px);
+    justify-content: center;
+    gap: 20px;
+}
+
+#main .pharmacy {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 300px);
+    justify-content: center;
+    gap: 20px;
+}
+
+.row.patients {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 400px);
+    justify-content: center;
+    gap: 20px;
+}
+
+#main .book-talons {
+    margin-top: 30px;
+    margin-bottom: 50px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 300px);
+    justify-content: left;
+    gap: 20px;
+}
+
+#main .row.addresses {
+    margin-top: 30px;
+    margin-bottom: 50px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 450px);
+    justify-content: left;
+    gap: 20px;
+}
+
+.row .talon, .row .patient {
+    width: 450px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #2a26ff;
+}
+
+#main .pharmacy .drug {
+    width: 300px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #2a26ff;
+}
+
+.row.addresses .address {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #2a26ff;
+}
+
+.row .talon p,
+.row .patient p,
+.row .address p,
+.pharmacy .drug{
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+}
+
+.talons .talon .talon-row,
+.patients .patient .patient-row,
+#main .pharmacy .drug-row {
+    display: flex;
+    justify-content: left;
+    margin-bottom: 10px;
+    padding: 10px 10px 0px;
+}
+
+#main .pharmacy .drug-row {
+    margin-bottom: 0px;
+}
+
+.talon-row .talon-title,
+#main .pharmacy .drug-title{
+    width: 100px;
+    font-weight: 700;
+}
+
+.patient-row .patient-title {
+    width: 150px;
+    font-weight: 700;
+}
+
+.talon .talon-button,
+.address .delete-address {
+    display: block;
+    color: white;
+    font-weight: 500;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: red;
+}
+
+.talon-button a {
+    text-decoration: none;
+    color: white;
+}
+
+.patient .patient-button,
+#main .personal-data {
+    display: block;
+    color: white;
+    font-weight: 500;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: blue;
+}
+
+#main .add-address,
+#main .add-patient {
+    display: block;
+    color: white;
+    font-weight: 500;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: green;
+}
+
+.patient-button a,
+#main .personal-data a,
+#main .add-address a,
+.addresses .delete-address a,
+#main .add-patient a {
+    text-decoration: none;
+    color: white;
+}
+
+.talon .talon-button:hover,
+.addresses .delete-address:hover {
+    background-color: #af0000;
+}
+
+.patient .patient-button:hover {
+    background-color: #0000af;
 }

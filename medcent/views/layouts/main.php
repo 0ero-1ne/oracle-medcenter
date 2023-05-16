@@ -41,6 +41,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         'items' => [
             ['label' => 'Заказать талон', 'url' => ['/talons']],
             ['label' => 'Прайслист', 'url' => ['/pricelist']],
+            ['label' => 'Аптека', 'url' => ['/pharmacy']],
+            ['label' => 'Оставить отзыв', 'url' => ['/leave-comment']],
             (Yii::$app->user->isGuest)
                 ? (['label' => 'Войти', 'url' => ['/login']])
                 :  (['label' => 'Аккаунт', 'url' => ['/user']]),

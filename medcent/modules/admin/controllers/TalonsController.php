@@ -103,7 +103,16 @@ class TalonsController extends Controller
         $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {            
+            if ($model->load($this->request->post())) {
+                $isTalonExists = Talons::findOne(['EMPLOYEE_ID' => $model->EMPLOYEE_ID, 'TALON_DATE' => $model->TALON_DATE]);
+                
+                if ($isTalonExists) {
+                    Yii::$app->getSession()->setFlash('error', 'Talon already exists!');
+                    return $this->render('create', [
+                        'model' => $model
+                    ]);
+                }
+                
                 if ($model->save())
                 {
                     return $this->redirect(['view', 'ID' => $model->ID]);

@@ -275,8 +275,13 @@ class DefaultController extends Controller
             return $this->goHome();
         }
 
-        $model = Talons::findOne($ID)->delete();
-        return $this->redirect('/user');
+        $model = Talons::findOne($ID);
+        $model->PATIENT_ID = '';
+
+        if ($model->save()) {
+            return $this->redirect('/user');
+        }
+
     }
 
     public function actionAddPatient()

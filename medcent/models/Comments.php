@@ -46,8 +46,8 @@ class Comments extends \yii\db\ActiveRecord
         return [
             'ID' => 'ID',
             'USER_ID' => 'User ID',
-            'EMPLOYEE_ID' => 'Employee ID',
-            'COMMENT_TEXT' => 'Comment Text',
+            'EMPLOYEE_ID' => 'Сотрудник',
+            'COMMENT_TEXT' => 'Ваш комментарий',
         ];
     }
 

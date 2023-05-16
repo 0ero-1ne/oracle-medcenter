@@ -71,3 +71,218 @@ $_SERVER = [
     'REMOTE_ADDR' => '127.0.0.1',
     'SERVER_S
 2023/04/30 16:23:52 [error] 3364#12772: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/05/13 22:54:20 [error] 7516#9692: *977 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /admin/addresses HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/05/13 22:54:23 [error] 7516#9692: *979 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /admin/addresses HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/05/13 22:54:43 [error] 7516#9692: *979 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /admin/addresses HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/05/13 22:54:48 [error] 7516#9692: *979 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /admin HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/05/13 22:54:52 [error] 7516#9692: *979 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /admin HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/05/13 22:54:55 [error] 7516#9692: *979 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/05/13 22:54:59 [error] 7516#9692: *979 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/05/13 22:58:29 [error] 7516#9692: *988 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/05/14 04:40:51 [error] 7516#9692: *1893 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while reading response header from upstream, client: 127.0.0.1, server: medcent.by, request: "GET /debug/default/toolbar?tag=64603c22a983d HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/"
+2023/05/14 04:41:06 [error] 7516#9692: *1896 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/site/logout"
+2023/05/14 04:41:16 [error] 7516#9692: *1898 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/site/logout"
+2023/05/14 05:04:13 [error] 7516#9692: *2031 FastCGI sent in stderr: "PHP Fatal error:  Class app\models\Users contains 5 abstract methods and must therefore be declared abstract or implement the remaining methods (yii\web\IdentityInterface::findIdentity, yii\web\IdentityInterface::findIdentityByAccessToken, yii\web\IdentityInterface::getId, ...) in D:\DB_Blinova\course-project\medcent\models\Users.php on line 18" while reading response header from upstream, client: 127.0.0.1, server: medcent.by, request: "POST /login HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/login"
+2023/05/14 05:05:18 [error] 7516#9692: *2033 FastCGI sent in stderr: "PHP Fatal error:  Class app\models\Users contains 4 abstract methods and must therefore be declared abstract or implement the remaining methods (yii\web\IdentityInterface::findIdentityByAccessToken, yii\web\IdentityInterface::getId, yii\web\IdentityInterface::getAuthKey, ...) in D:\DB_Blinova\course-project\medcent\models\Users.php on line 18" while reading response header from upstream, client: 127.0.0.1, server: medcent.by, request: "POST /login HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/login"
+2023/05/14 05:05:36 [error] 7516#9692: *2035 FastCGI sent in stderr: "PHP Fatal error:  Class app\models\Users contains 3 abstract methods and must therefore be declared abstract or implement the remaining methods (yii\web\IdentityInterface::getId, yii\web\IdentityInterface::getAuthKey, yii\web\IdentityInterface::validateAuthKey) in D:\DB_Blinova\course-project\medcent\models\Users.php on line 18" while reading response header from upstream, client: 127.0.0.1, server: medcent.by, request: "POST /login HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/login"
+2023/05/14 05:05:56 [error] 7516#9692: *2037 FastCGI sent in stderr: "PHP Fatal error:  Class app\models\Users contains 2 abstract methods and must therefore be declared abstract or implement the remaining methods (yii\web\IdentityInterface::getAuthKey, yii\web\IdentityInterface::validateAuthKey) in D:\DB_Blinova\course-project\medcent\models\Users.php on line 18" while reading response header from upstream, client: 127.0.0.1, server: medcent.by, request: "POST /login HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/login"
+2023/05/14 05:17:16 [error] 7516#9692: *2106 FastCGI sent in stderr: "PHP Fatal error:  Cannot use yii\web\Controller as Controller because the name is already in use in D:\DB_Blinova\course-project\medcent\modules\user\controllers\DefaultController.php on line 7" while reading response header from upstream, client: 127.0.0.1, server: medcent.by, request: "GET /user HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"
+2023/05/14 14:44:55 [error] 7516#9692: *2717 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "POST /admin/departments/create HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/admin/departments/create"
+2023/05/14 17:34:16 [error] 7516#9692: *3425 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /debug/default/toolbar?tag=6460f16588688 HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/admin/users/create"
+2023/05/14 17:35:09 [error] 7516#9692: *3428 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /admin/users/create HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/admin/users"
+2023/05/14 22:53:57 [error] 7516#9692: *4319 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while reading response header from upstream, client: 127.0.0.1, server: medcent.by, request: "GET /debug/default/toolbar?tag=64613c545f102 HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/admin/patients/update?ID=1"
+2023/05/14 22:55:07 [error] 7516#9692: *4321 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "POST /admin/patients/update?ID=1 HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/admin/patients/update?ID=1"
+2023/05/15 01:06:08 [error] 7516#9692: *4935 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while reading response header from upstream, client: 127.0.0.1, server: medcent.by, request: "GET /debug/default/toolbar?tag=64615b4fb1807 HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/gii/crud"
+2023/05/15 01:07:20 [error] 7516#9692: *4948 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "POST /gii/crud HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/gii/crud"
+2023/05/15 12:15:03 [error] 7516#9692: *5696 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /admin/treatments/create HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/admin/treatments"
+2023/05/15 20:54:02 [error] 7516#9692: *6651 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /admin/patients/create HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/admin/patients"
+2023/05/16 00:53:14 [error] 7516#9692: *7780 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /user/patient/1 HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/patients"
+2023/05/16 04:15:57 [error] 7516#9692: *8675 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /patients HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/user/patient/1"
+2023/05/16 04:28:25 [error] 7516#9692: *8744 FastCGI sent in stderr: "An Error occurred while handling another error:
+yii\web\HeadersAlreadySentException: Headers already sent in D:\DB_Blinova\course-project\medcent\modules\user\controllers\DefaultController.php on line 272. in D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php:368
+Stack trace:
+#0 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php(341): yii\web\Response->sendHeaders()
+#1 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\ErrorHandler.php(136): yii\web\Response->send()
+#2 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\base\ErrorHandler.php(152): yii\web\ErrorHandler->renderException()
+#3 [internal function]: yii\base\ErrorHandler->handleException()
+#4 {main}
+Previous exception:
+yii\web\HeadersAlreadySentException: Headers already sent in D:\DB_Blinova\course-project\medcent\modules\user\controllers\DefaultController.php on line 272. in D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php:368
+Stack trace:
+#0 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php(341): yii\web\Response->sendHeaders()
+#1 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\base\Application.php(390): yii\web\Response->send()
+#2 D:\DB_Blinova\course-project\medcent\web\index.php(12): yii\base\Application->run()
+#3 {main}
+$_SERVER = [
+    'ALLUSERSPROFILE' => 'C:\\ProgramData',
+    'APPDATA' => 'C:\\Users\\Dimav\\AppData\\Roaming',
+    'ChocolateyInstall' => 'C:\\ProgramData\\chocolatey',
+    'ChocolateyLastPathUpdate' => '133272663614230316',
+    'ChocolateyToolsLocation' => 'C:\\tools',
+    'CommonProgramFiles' => 'C:\\Program Files\\Common Files',
+    'CommonProgramFiles(x86)' => 'C:\\Program Files (x86)\\Common Files',
+    'CommonProgramW6432' => 'C:\\Program Files\\Common Files',
+    'COMPUTERNAME' => 'DMITRY',
+    'ComSpec' => 'C:\\Windows\\system32\\cmd.exe',
+    'DriverData' => 'C:\\Windows\\System32\\Drivers\\DriverData',
+    'GOPATH' => 'C:\\Users\\D
+2023/05/16 04:28:25 [error] 7516#9692: *8744 FastCGI sent in stderr: "es\\Python311\\;C:\\Program Files\\Common Files\\Oracle\\Java\\javapath;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Python39\\Scripts\\;C:\\Python39\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\ProgramData\\chocolatey\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\dotnet\\;D:\\xampp\\php;C:\\ProgramData\\ComposerSetup\\bin;C:\\Program Files (x86)\\dotnet\\;C:\\msys64;C:\\Program Files\\MATLAB\\R2012b\\runtime\\win64;C:\\Program Files\\MATLAB\\R2012b\\bin;C:\\tools\\php82;C:\\Program Files\\Go\\bin;C:\\tools\\php81;C:\\Users\\Dimav\\scoop\\shims;C:\\Users\\Dimav\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Dimav\\AppData\\Roaming\\npm;C:\\Program Files\\Java\\jdk-18.0.1.1\\bin;C:\\Users\\Dimav\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Program Files\\JetBrains\\PhpStorm 2022.2\\bin;;C:\\Program Files\\Azure Data Studio\\bin;C:\\Users\\Dimav\\AppData\\Roaming\\Composer\\vendor\\bin;C:\\php;C:\\nginx;C:\\Users\\Dimav\\.dotnet\\tools;C:\\Program Files\\bin\\OpenVPN;C:\\msys64\\mingw64\\bin;C:\\Users\\Dimav\\go\\bin;C:\\tools\\nginx-1.23.4;',
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL',
+    'PhpStorm' => 'C:\\Program Files\\JetBrains\\PhpStorm 2022.2\\bin;',
+    'PROCESSOR_ARCHITECTURE' => 'AMD64',
+    'PROCESSOR_IDENTIFIER' => 'Intel64 Family 6 Model 126 Stepping 5, GenuineIntel',
+    'PROCESSOR_LEVEL' => '6',
+    'PROCESSOR_REVISION' => '7e05',
+    'ProgramData' => 'C:\\ProgramData',
+    'ProgramFiles' => 'C:\\Program Files',
+    'ProgramFiles(x86)' => 'C:\\Program Files (x86)',
+    'ProgramW6432' => 'C:\\Program Files',
+    'PROMPT' => '$P$G',
+    'PSModulePath' => 'C:\\Users\\Dimav\\OneDrive\\Документы\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShell\\Modules;C:\\Windows\\
+2023/05/16 04:28:25 [error] 7516#9692: *8744 FastCGI sent in stderr: "    'REMOTE_ADDR' => '127.0.0.1',
+    'SERVER_SOFTWARE' => 'nginx/1.23.4',
+    'GATEWAY_INTERFACE' => 'CGI/1.1',
+    'REQUEST_SCHEME' => 'http',
+    'SERVER_PROTOCOL' =" while reading upstream, client: 127.0.0.1, server: medcent.by, request: "POST /user/add-patient HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/user/add-patient"
+2023/05/16 04:28:25 [error] 7516#9692: *8744 FastCGI sent in stderr: "> 'HTTP/1.1',
+    'DOCUMENT_ROOT' => 'D:\\DB_Blinova\\course-project\\medcent\\web',
+    'DOCUMENT_URI' => '/index.php',
+    'REQUEST_URI' => '/user/add-patient',
+    'SCRIPT_NAME' => '/index.php',
+    'CONTENT_LENGTH' => '392',
+    'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
+    'REQUEST_METHOD' => 'POST',
+    'QUERY_STRING' => '',
+    'SCRIPT_FILENAME' => 'D:\\DB_Blinova\\course-project\\medcent\\web/index.php',
+    'FCGI_ROLE' => 'RESPONDER',
+    'PHP_SELF' => '/index.php',
+    'REQUEST_TIME_FLOAT' => 1684200505.246259,
+    'REQUEST_TIME' => 1684200505,
+]" while reading upstream, client: 127.0.0.1, server: medcent.by, request: "POST /user/add-patient HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/user/add-patient"
+2023/05/16 04:33:28 [error] 7516#9692: *8755 FastCGI sent in stderr: "An Error occurred while handling another error:
+yii\web\HeadersAlreadySentException: Headers already sent in D:\DB_Blinova\course-project\medcent\modules\user\controllers\DefaultController.php on line 272. in D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php:368
+Stack trace:
+#0 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php(341): yii\web\Response->sendHeaders()
+#1 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\ErrorHandler.php(136): yii\web\Response->send()
+#2 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\base\ErrorHandler.php(152): yii\web\ErrorHandler->renderException()
+#3 [internal function]: yii\base\ErrorHandler->handleException()
+#4 {main}
+Previous exception:
+yii\web\HeadersAlreadySentException: Headers already sent in D:\DB_Blinova\course-project\medcent\modules\user\controllers\DefaultController.php on line 272. in D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php:368
+Stack trace:
+#0 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php(341): yii\web\Response->sendHeaders()
+#1 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\base\Application.php(390): yii\web\Response->send()
+#2 D:\DB_Blinova\course-project\medcent\web\index.php(12): yii\base\Application->run()
+#3 {main}
+$_SERVER = [
+    'ALLUSERSPROFILE' => 'C:\\ProgramData',
+    'APPDATA' => 'C:\\Users\\Dimav\\AppData\\Roaming',
+    'ChocolateyInstall' => 'C:\\ProgramData\\chocolatey',
+    'ChocolateyLastPathUpdate' => '133272663614230316',
+    'ChocolateyToolsLocation' => 'C:\\tools',
+    'CommonProgramFiles' => 'C:\\Program Files\\Common Files',
+    'CommonProgramFiles(x86)' => 'C:\\Program Files (x86)\\Common Files',
+    'CommonProgramW6432' => 'C:\\Program Files\\Common Files',
+    'COMPUTERNAME' => 'DMITRY',
+    'ComSpec' => 'C:\\Windows\\system32\\cmd.exe',
+    'DriverData' => 'C:\\Windows\\System32\\Drivers\\DriverData',
+    'GOPATH' => 'C:\\Users\\D
+2023/05/16 04:33:28 [error] 7516#9692: *8755 FastCGI sent in stderr: "on311\\Scripts\\;C:\\Program Files\\Python311\\;C:\\Program Files\\Common Files\\Oracle\\Java\\javapath;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Python39\\Scripts\\;C:\\Python39\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\ProgramData\\chocolatey\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\dotnet\\;D:\\xampp\\php;C:\\ProgramData\\ComposerSetup\\bin;C:\\Program Files (x86)\\dotnet\\;C:\\msys64;C:\\Program Files\\MATLAB\\R2012b\\runtime\\win64;C:\\Program Files\\MATLAB\\R2012b\\bin;C:\\tools\\php82;C:\\Program Files\\Go\\bin;C:\\tools\\php81;C:\\Users\\Dimav\\scoop\\shims;C:\\Users\\Dimav\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Dimav\\AppData\\Roaming\\npm;C:\\Program Files\\Java\\jdk-18.0.1.1\\bin;C:\\Users\\Dimav\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Program Files\\JetBrains\\PhpStorm 2022.2\\bin;;C:\\Program Files\\Azure Data Studio\\bin;C:\\Users\\Dimav\\AppData\\Roaming\\Composer\\vendor\\bin;C:\\php;C:\\nginx;C:\\Users\\Dimav\\.dotnet\\tools;C:\\Program Files\\bin\\OpenVPN;C:\\msys64\\mingw64\\bin;C:\\Users\\Dimav\\go\\bin;C:\\tools\\nginx-1.23.4;',
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL',
+    'PhpStorm' => 'C:\\Program Files\\JetBrains\\PhpStorm 2022.2\\bin;',
+    'PROCESSOR_ARCHITECTURE' => 'AMD64',
+    'PROCESSOR_IDENTIFIER' => 'Intel64 Family 6 Model 126 Stepping 5, GenuineIntel',
+    'PROCESSOR_LEVEL' => '6',
+    'PROCESSOR_REVISION' => '7e05',
+    'ProgramData' => 'C:\\ProgramData',
+    'ProgramFiles' => 'C:\\Program Files',
+    'ProgramFiles(x86)' => 'C:\\Program Files (x86)',
+    'ProgramW6432' => 'C:\\Program Files',
+    'PROMPT' => '$P$G',
+    'PSModulePath' => 'C:\\Users\\Dimav\\OneDrive\\Документы\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsP
+2023/05/16 04:33:28 [error] 7516#9692: *8755 FastCGI sent in stderr: "'80',
+    'SERVER_ADDR' => '127.0.0.1',
+    'REMOTE_PORT' => '51138',
+    'REMOTE_ADDR' => '127.0.0.1',
+    'SERVER_SOFTWARE' => 'nginx/1.23.4',
+    'GATEWAY_INTERFACE' => 'CGI/1.1',
+    'REQUEST_SCHEME' => 'http',
+    'SERVER_PROTOCOL' => 'HTTP/1.1',
+    'DOCUMENT_ROOT' => 'D:\\DB_Blinova\\course-project\\medcent\\web',
+    'DOCUMENT_URI' => '/index.php',
+    'REQUEST_URI' => '/user/add-patient',
+    'SCRIPT_NAME' => '/index.php',
+    'CONTENT_LENGTH' => '392',
+    'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
+    'REQUEST_METHOD' => 'POST',
+    'QUERY_STRING' => '',
+    'SCRIPT_FILENAME' => 'D:\\DB_Blinova\\course-project\\medcent\\web/index.php',
+    'FCGI_ROLE' => 'RESPONDER',
+    'PHP_SELF' => '/index.php',
+    'REQUEST_TIME_FLOAT' => 1684200808.477266,
+    'REQUEST_TIME' => 1684200808,
+]" while reading upstream, client: 127.0.0.1, server: medcent.by, request: "POST /user/add-patient HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/user/add-patient"
+2023/05/16 04:34:37 [error] 7516#9692: *8757 FastCGI sent in stderr: "An Error occurred while handling another error:
+yii\web\HeadersAlreadySentException: Headers already sent in D:\DB_Blinova\course-project\medcent\modules\user\controllers\DefaultController.php on line 273. in D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php:368
+Stack trace:
+#0 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php(341): yii\web\Response->sendHeaders()
+#1 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\ErrorHandler.php(136): yii\web\Response->send()
+#2 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\base\ErrorHandler.php(152): yii\web\ErrorHandler->renderException()
+#3 [internal function]: yii\base\ErrorHandler->handleException()
+#4 {main}
+Previous exception:
+yii\web\HeadersAlreadySentException: Headers already sent in D:\DB_Blinova\course-project\medcent\modules\user\controllers\DefaultController.php on line 273. in D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php:368
+Stack trace:
+#0 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\web\Response.php(341): yii\web\Response->sendHeaders()
+#1 D:\DB_Blinova\course-project\medcent\vendor\yiisoft\yii2\base\Application.php(390): yii\web\Response->send()
+#2 D:\DB_Blinova\course-project\medcent\web\index.php(12): yii\base\Application->run()
+#3 {main}
+$_SERVER = [
+    'ALLUSERSPROFILE' => 'C:\\ProgramData',
+    'APPDATA' => 'C:\\Users\\Dimav\\AppData\\Roaming',
+    'ChocolateyInstall' => 'C:\\ProgramData\\chocolatey',
+    'ChocolateyLastPathUpdate' => '133272663614230316',
+    'ChocolateyToolsLocation' => 'C:\\tools',
+    'CommonProgramFiles' => 'C:\\Program Files\\Common Files',
+    'CommonProgramFiles(x86)' => 'C:\\Program Files (x86)\\Common Files',
+    'CommonProgramW6432' => 'C:\\Program Files\\Common Files',
+    'COMPUTERNAME' => 'DMITRY',
+    'ComSpec' => 'C:\\Windows\\system32\\cmd.exe',
+    'DriverData' => 'C:\\Windows\\System32\\Drivers\\DriverData',
+    'GOPATH' => 'C:\\Users\\D
+2023/05/16 04:34:37 [error] 7516#9692: *8757 FastCGI sent in stderr: "cripts\\;C:\\Program Files\\Python311\\;C:\\Program Files\\Common Files\\Oracle\\Java\\javapath;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Python39\\Scripts\\;C:\\Python39\\;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\ProgramData\\chocolatey\\bin;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\dotnet\\;D:\\xampp\\php;C:\\ProgramData\\ComposerSetup\\bin;C:\\Program Files (x86)\\dotnet\\;C:\\msys64;C:\\Program Files\\MATLAB\\R2012b\\runtime\\win64;C:\\Program Files\\MATLAB\\R2012b\\bin;C:\\tools\\php82;C:\\Program Files\\Go\\bin;C:\\tools\\php81;C:\\Users\\Dimav\\scoop\\shims;C:\\Users\\Dimav\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Dimav\\AppData\\Roaming\\npm;C:\\Program Files\\Java\\jdk-18.0.1.1\\bin;C:\\Users\\Dimav\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Program Files\\JetBrains\\PhpStorm 2022.2\\bin;;C:\\Program Files\\Azure Data Studio\\bin;C:\\Users\\Dimav\\AppData\\Roaming\\Composer\\vendor\\bin;C:\\php;C:\\nginx;C:\\Users\\Dimav\\.dotnet\\tools;C:\\Program Files\\bin\\OpenVPN;C:\\msys64\\mingw64\\bin;C:\\Users\\Dimav\\go\\bin;C:\\tools\\nginx-1.23.4;',
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL',
+    'PhpStorm' => 'C:\\Program Files\\JetBrains\\PhpStorm 2022.2\\bin;',
+    'PROCESSOR_ARCHITECTURE' => 'AMD64',
+    'PROCESSOR_IDENTIFIER' => 'Intel64 Family 6 Model 126 Stepping 5, GenuineIntel',
+    'PROCESSOR_LEVEL' => '6',
+    'PROCESSOR_REVISION' => '7e05',
+    'ProgramData' => 'C:\\ProgramData',
+    'ProgramFiles' => 'C:\\Program Files',
+    'ProgramFiles(x86)' => 'C:\\Program Files (x86)',
+    'ProgramW6432' => 'C:\\Program Files',
+    'PROMPT' => '$P$G',
+    'PSModulePath' => 'C:\\Users\\Dimav\\OneDrive\\Документы\\WindowsPowerShell\\Modules;C:\\Program Files\\WindowsPowerShel
+2023/05/16 04:34:37 [error] 7516#9692: *8757 FastCGI sent in stderr: "  'SERVER_ADDR' => '127.0.0.1',
+    'REMOTE_PORT' => '51152',
+    'REMOTE_ADDR' => '127.0.0.1',
+    'SERVER_SOFTWARE' => 'nginx/1.23.4',
+    'GATEWAY_INTERFACE' => 'CGI/1.1',
+    'REQUEST_SCHEME' => 'http',
+    'SERVER_PROTOCOL' => 'HTTP/1.1',
+    'DOCUMENT_ROOT' => 'D:\\DB_Blinova\\course-project\\medcent\\web',
+    'DOCUMENT_URI' => '/index.php',
+    'REQUEST_URI' => '/user/add-patient',
+    'SCRIPT_NAME' => '/index.php',
+    'CONTENT_LENGTH' => '392',
+    'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
+    'REQUEST_METHOD' => 'POST',
+    'QUERY_STRING' => '',
+    'SCRIPT_FILENAME' => 'D:\\DB_Blinova\\course-project\\medcent\\web/index.php',
+    'FCGI_ROLE' => 'RESPONDER',
+    'PHP_SELF' => '/index.php',
+    'REQUEST_TIME_FLOAT' => 1684200876.987028,
+    'REQUEST_TIME' => 1684200876,
+]" while reading upstream, client: 127.0.0.1, server: medcent.by, request: "POST /user/add-patient HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/user/add-patient"
+2023/05/16 06:51:16 [error] 7516#9692: *9392 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /admin/talons/create HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost", referrer: "http://localhost/admin/talons"
+2023/05/16 06:51:23 [error] 7516#9692: *9409 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 127.0.0.1, server: medcent.by, request: "GET /admin/users HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost"

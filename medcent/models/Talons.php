@@ -45,9 +45,9 @@ class Talons extends \yii\db\ActiveRecord
     {
         return [
             'ID' => 'ID',
-            'TALON_DATE' => 'Talon Date',
-            'EMPLOYEE_ID' => 'Employee ID',
-            'PATIENT_ID' => 'Patient ID',
+            'TALON_DATE' => 'Дата',
+            'EMPLOYEE_ID' => 'Сотрудник',
+            'PATIENT_ID' => 'Пациент',
         ];
     }
 

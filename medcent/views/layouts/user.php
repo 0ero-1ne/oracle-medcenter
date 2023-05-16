@@ -39,8 +39,9 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav ms-auto'],
         'items' => [
+            ['label' => 'Заказать талон', 'url' => '/talons'],
             ['label' => 'Пациенты', 'url' => ['/user/patients']],
-            ['label' => 'Аккаунт', 'url' => ['/user']],
+            ['label' => 'Талоны', 'url' => ['/user']],
             (
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')
