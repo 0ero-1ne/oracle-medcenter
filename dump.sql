@@ -4,6 +4,7 @@
 -- PREPARING THE DATABASE TO CREATE THE NECESSARY OBJECTS
 -- AT FIRST DROP ALL TABLES WITH THE SAME NAME
 
+ALTER SESSION SET "_oracle_script" = TRUE;
 
 -- DROP TABLE PHARMACY
 --/
@@ -306,7 +307,6 @@ CREATE TABLE ROLES
 ) TABLESPACE TS_USERS;
 
 INSERT ALL
-    INTO ROLES VALUES ('guest')
 	INTO ROLES VALUES ('user') -- PATIENT
 	INTO ROLES VALUES ('doctor')
 	INTO ROLES VALUES ('manager') -- ADMIN
@@ -523,13 +523,37 @@ CREATE TABLE COMMENTS
 
 
 
-
-
 -- CRUD PROCEDURES FOR EVERY TABLE
-
--- ADDRESSES PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_address
+CREATE OR REPLACE PACKAGE ADDRESSES_tapi
+IS
+PROCEDURE create_address
+(
+    p_region in ADDRESSES.region%TYPE,
+    p_town in ADDRESSES.town%TYPE,
+    p_street in ADDRESSES.street%TYPE,
+    p_house_number in ADDRESSES.house_number%TYPE,
+    p_flat in ADDRESSES.flat%TYPE
+);
+PROCEDURE update_address
+(
+    p_id in ADDRESSES.id%TYPE,
+    p_region in ADDRESSES.region%TYPE,
+    p_town in ADDRESSES.town%TYPE,
+    p_street in ADDRESSES.street%TYPE,
+    p_house_number in ADDRESSES.house_number%TYPE,
+    p_flat in ADDRESSES.flat%TYPE
+);
+PROCEDURE delete_address
+(
+    p_id in ADDRESSES.id%TYPE
+);
+END ADDRESSES_tapi;
+--/
+--/
+CREATE OR REPLACE PACKAGE BODY ADDRESSES_tapi
+IS
+PROCEDURE create_address
 (
     p_region in ADDRESSES.region%TYPE,
     p_town in ADDRESSES.town%TYPE,
@@ -563,10 +587,8 @@ EXCEPTION
     WHEN empty_parameter_ex THEN
         dbms_output.put_line('Empty parameter');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_address
+PROCEDURE update_address
 (
     p_id in ADDRESSES.id%TYPE,
     p_region in ADDRESSES.region%TYPE,
@@ -589,10 +611,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure_error');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_address
+PROCEDURE delete_address
 (
     p_id in ADDRESSES.id%TYPE
 )
@@ -604,13 +624,40 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure_error');
 END;
+END;
 --/
 
 
 
--- PASSPORTS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_passport
+CREATE OR REPLACE PACKAGE PASSPORTS_tapi
+is
+PROCEDURE create_passport
+(
+    p_passport_number in PASSPORTS.passport_number%TYPE,
+    p_date_of_issue in VARCHAR2,
+    p_date_of_expiry in VARCHAR2,
+    p_authority in PASSPORTS.authority%TYPE
+);
+PROCEDURE update_passport
+(
+    p_id in PASSPORTS.id%TYPE,
+    p_passport_number in PASSPORTS.passport_number%TYPE,
+    p_date_of_issue VARCHAR2,
+    p_date_of_expiry VARCHAR2,
+    p_authority in PASSPORTS.authority%TYPE
+);
+PROCEDURE delete_passport
+(
+    p_id in PASSPORTS.id%TYPE
+);
+END PASSPORTS_tapi;
+--/
+
+--/
+CREATE OR REPLACE PACKAGE BODY PASSPORTS_tapi
+IS
+PROCEDURE create_passport
 (
     p_passport_number in PASSPORTS.passport_number%TYPE,
     p_date_of_issue in VARCHAR2,
@@ -642,10 +689,8 @@ EXCEPTION
     WHEN OTHERS THEN    
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_passport
+PROCEDURE update_passport
 (
     p_id in PASSPORTS.id%TYPE,
     p_passport_number in PASSPORTS.passport_number%TYPE,
@@ -666,10 +711,8 @@ EXCEPTION
     WHEN OTHERS THEN    
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_passport
+PROCEDURE delete_passport
 (
     p_id in PASSPORTS.id%TYPE
 )
@@ -681,13 +724,39 @@ EXCEPTION
     WHEN OTHERS THEN    
         dbms_output.put_line('Procedure error!');
 END;
+END;
 --/
 
 
 
 -- USERS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_user
+create or replace package USERS_tapi
+is
+PROCEDURE create_user
+(
+    p_user_role in USERS.user_role%TYPE,
+    p_email in USERS.email%TYPE,
+    p_password in VARCHAR2
+);
+PROCEDURE update_user
+(
+    p_id in USERS.id%TYPE,
+    p_user_role in USERS.user_role%TYPE,
+    p_email in USERS.email%TYPE,
+    p_password in VARCHAR2
+);
+PROCEDURE delete_user
+(
+    p_id in USERS.id%TYPE
+);
+end USERS_tapi;
+--/
+
+--/
+create or replace package body USERS_tapi
+is
+PROCEDURE create_user
 (
     p_user_role in USERS.user_role%TYPE,
     p_email in USERS.email%TYPE,
@@ -713,12 +782,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error');
 END;
---/
 
-select * from persons;
-
---/
-CREATE OR REPLACE PROCEDURE update_user
+PROCEDURE update_user
 (
     p_id in USERS.id%TYPE,
     p_user_role in USERS.user_role%TYPE,
@@ -737,10 +802,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_user
+PROCEDURE delete_user
 (
     p_id in USERS.id%TYPE
 )
@@ -749,13 +812,47 @@ BEGIN
     DELETE FROM USERS WHERE id = p_id;
     COMMIT;
 END;
+END;
 --/
 
 
 
 -- PERSONS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_person
+create or replace package PERSONS_tapi
+is
+PROCEDURE create_person
+(
+    p_first_name in PERSONS.first_name%TYPE,
+    p_second_name in PERSONS.second_name%TYPE,
+    p_last_name in PERSONS.last_name%TYPE,
+    p_passport_id in PERSONS.passport_id%TYPE,
+    p_birth_date VARCHAR2,
+    p_gender in PERSONS.gender%TYPE
+);
+
+PROCEDURE update_person
+(
+    p_id in PERSONS.id%TYPE,
+    p_first_name in PERSONS.first_name%TYPE,
+    p_second_name in PERSONS.second_name%TYPE,
+    p_last_name in PERSONS.last_name%TYPE,
+    p_passport_id in PERSONS.passport_id%TYPE,
+    p_birth_date VARCHAR2,
+    p_gender in PERSONS.gender%TYPE
+);
+
+PROCEDURE delete_person
+(
+    p_id in PERSONS.id%TYPE
+);
+END PERSONS_tapi;
+--/
+
+--/
+create or replace package body PERSONS_tapi
+is
+PROCEDURE create_person
 (
     p_first_name in PERSONS.first_name%TYPE,
     p_second_name in PERSONS.second_name%TYPE,
@@ -796,10 +893,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_person
+PROCEDURE update_person
 (
     p_id in PERSONS.id%TYPE,
     p_first_name in PERSONS.first_name%TYPE,
@@ -824,10 +919,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_person
+PROCEDURE delete_person
 (
     p_id in PERSONS.id%TYPE
 )
@@ -839,13 +932,37 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
+END;
 --/
 
 
 
 -- PERSON_ADDRESS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_person_address
+create or replace package PERSON_ADDRESS_tapi
+is
+PROCEDURE create_person_address
+(
+    p_person_id in PERSON_ADDRESS.person_id%TYPE,
+    p_address_id in PERSON_ADDRESS.address_id%TYPE
+);
+PROCEDURE update_person_address
+(
+    p_id in PERSON_ADDRESS.id%TYPE,
+    p_person_id in PERSON_ADDRESS.person_id%TYPE,
+    p_address_id in PERSON_ADDRESS.address_id%TYPE
+);
+PROCEDURE delete_person_address
+(
+    p_id in PERSON_ADDRESS.id%TYPE
+);
+END PERSON_ADDRESS_tapi;
+--/
+
+--/
+create or replace package body PERSON_ADDRESS_tapi
+is
+PROCEDURE create_person_address
 (
     p_person_id in PERSON_ADDRESS.person_id%TYPE,
     p_address_id in PERSON_ADDRESS.address_id%TYPE
@@ -869,10 +986,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_person_address
+PROCEDURE update_person_address
 (
     p_id in PERSON_ADDRESS.id%TYPE,
     p_person_id in PERSON_ADDRESS.person_id%TYPE,
@@ -889,10 +1004,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_person_address
+PROCEDURE delete_person_address
 (
     p_id in PERSON_ADDRESS.id%TYPE
 )
@@ -904,13 +1017,39 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
+END;
 --/
 
 
 
 -- PATIENTS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_patient
+create or replace package PATIENTS_tapi
+is
+PROCEDURE create_patient
+(
+    p_auth_data in PATIENTS.auth_data%TYPE,
+    p_person_id in PATIENTS.person_id%TYPE,
+    p_phone in PATIENTS.phone%TYPE
+);
+PROCEDURE update_patient
+(
+    p_id in PATIENTS.id%TYPE,
+    p_auth_data in PATIENTS.auth_data%TYPE,
+    p_person_id in PATIENTS.person_id%TYPE,
+    p_phone in PATIENTS.phone%TYPE
+);
+PROCEDURE delete_patient
+(
+    p_id in PATIENTS.id%TYPE
+);
+END PATIENTS_tapi;
+--/
+
+--/
+create or replace package body PATIENTS_tapi
+is
+PROCEDURE create_patient
 (
     p_auth_data in PATIENTS.auth_data%TYPE,
     p_person_id in PATIENTS.person_id%TYPE,
@@ -939,10 +1078,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_patient
+PROCEDURE update_patient
 (
     p_id in PATIENTS.id%TYPE,
     p_auth_data in PATIENTS.auth_data%TYPE,
@@ -961,10 +1098,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_patient
+PROCEDURE delete_patient
 (
     p_id in PATIENTS.id%TYPE
 )
@@ -976,13 +1111,49 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
+END;
 --/
 
 
 
 -- EMPLOYEES PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_employee
+create or replace package EMPLOYEES_tapi
+is
+PROCEDURE create_employee
+(
+    p_auth_data in EMPLOYEES.auth_data%TYPE,
+    p_person_id in EMPLOYEES.person_id%TYPE,
+    p_position_id in EMPLOYEES.position_id%TYPE,
+    p_hire_date in VARCHAR2,
+    p_education in EMPLOYEES.education%TYPE,
+    p_phone in EMPLOYEES.phone%TYPE,
+    p_salary in EMPLOYEES.salary%TYPE,
+    p_on_vacation in EMPLOYEES.on_vacation%TYPE
+);
+PROCEDURE update_employee
+(
+    p_id in EMPLOYEES.id%TYPE,
+    p_auth_data in EMPLOYEES.auth_data%TYPE,
+    p_person_id in EMPLOYEES.person_id%TYPE,
+    p_position_id in EMPLOYEES.position_id%TYPE,
+    p_hire_date in VARCHAR2,
+    p_education in EMPLOYEES.education%TYPE,
+    p_phone in EMPLOYEES.phone%TYPE,
+    p_salary in EMPLOYEES.salary%TYPE,
+    p_on_vacation in EMPLOYEES.on_vacation%TYPE
+);
+PROCEDURE delete_employee
+(
+    p_id in EMPLOYEES.id%TYPE
+);
+END EMPLOYEES_tapi;
+--/
+
+--/
+create or replace package body EMPLOYEES_tapi
+is
+PROCEDURE create_employee
 (
     p_auth_data in EMPLOYEES.auth_data%TYPE,
     p_person_id in EMPLOYEES.person_id%TYPE,
@@ -1028,7 +1199,7 @@ BEGIN
         RAISE empty_parameter_ex;
     END IF;
     
-    INSERT INTO EMPLOYEES(auth_data, person_id, position_id hire_date, education, phone, salary, on_vacation)
+    INSERT INTO EMPLOYEES(auth_data, person_id, position_id, hire_date, education, phone, salary, on_vacation)
     VALUES(p_auth_data, p_person_id, p_position_id, to_date(TRIM(p_hire_date), 'dd.mm.yyyy'), TRIM(p_education), TRIM(p_phone), p_salary, TRIM(p_on_vacation));
     COMMIT;
 EXCEPTION
@@ -1037,10 +1208,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_employee
+PROCEDURE update_employee
 (
     p_id in EMPLOYEES.id%TYPE,
     p_auth_data in EMPLOYEES.auth_data%TYPE,
@@ -1069,10 +1238,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_employee
+PROCEDURE delete_employee
 (
     p_id in EMPLOYEES.id%TYPE
 )
@@ -1081,13 +1248,37 @@ BEGIN
     DELETE FROM EMPLOYEES WHERE id = p_id;
     COMMIT;
 END;
+END;
 --/
 
 
 
 -- DEPARTMENTS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_department
+create or replace package DEPARTMENTS_tapi
+is
+PROCEDURE create_department
+(
+    p_dep_name in DEPARTMENTS.department_name%TYPE,
+    p_dep_manager in DEPARTMENTS.department_manager%TYPE
+);
+PROCEDURE update_department
+(
+    p_id in DEPARTMENTS.id%TYPE,
+    p_dep_name in DEPARTMENTS.department_name%TYPE,
+    p_dep_manager in DEPARTMENTS.department_manager%TYPE
+);
+PROCEDURE delete_department
+(
+    p_id in DEPARTMENTS.id%TYPE
+);
+END DEPARTMENTS_tapi;
+--/
+
+--/
+create or replace package body DEPARTMENTS_tapi
+is
+PROCEDURE create_department
 (
     p_dep_name in DEPARTMENTS.department_name%TYPE,
     p_dep_manager in DEPARTMENTS.department_manager%TYPE
@@ -1107,10 +1298,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_department
+PROCEDURE update_department
 (
     p_id in DEPARTMENTS.id%TYPE,
     p_dep_name in DEPARTMENTS.department_name%TYPE,
@@ -1127,10 +1316,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_department
+PROCEDURE delete_department
 (
     p_id in DEPARTMENTS.id%TYPE
 )
@@ -1139,13 +1326,37 @@ BEGIN
     DELETE FROM DEPARTMENTS WHERE id = p_id;
     COMMIT;
 END;
+END;
 --/
 
 
 
 -- POSITIONS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_position
+create or replace package POSITIONS_tapi
+is
+PROCEDURE create_position
+(
+    p_pos_name in POSITIONS.position_name%TYPE,
+    p_pos_type in POSITIONS.position_type%TYPE
+);
+PROCEDURE update_position
+(
+    p_id in POSITIONS.id%TYPE,
+    p_pos_name in POSITIONS.position_name%TYPE,
+    p_pos_type in POSITIONS.position_type%TYPE
+);
+PROCEDURE delete_position
+(
+    p_id in POSITIONS.id%TYPE
+);
+END POSITIONS_tapi;
+--/
+
+--/
+create or replace package body POSITIONS_tapi
+is
+PROCEDURE create_position
 (
     p_pos_name in POSITIONS.position_name%TYPE,
     p_pos_type in POSITIONS.position_type%TYPE
@@ -1170,10 +1381,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_position
+PROCEDURE update_position
 (
     p_id in POSITIONS.id%TYPE,
     p_pos_name in POSITIONS.position_name%TYPE,
@@ -1190,10 +1399,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_position
+PROCEDURE delete_position
 (
     p_id in POSITIONS.id%TYPE
 )
@@ -1202,13 +1409,37 @@ BEGIN
     DELETE FROM POSITIONS WHERE id = p_id;
     COMMIT;
 END;
+END;
 --/
 
 
 
 -- DEPARTMENT_EMPLOYEE PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_department_employee
+create or replace package DEPARTMENT_EMPLOYEE_tapi
+is
+PROCEDURE create_department_employee
+(
+    p_dep_id in DEPARTMENT_EMPLOYEE.department_id%TYPE,
+    p_emp_id in DEPARTMENT_EMPLOYEE.employee_id%TYPE
+);
+PROCEDURE update_branch_department
+(
+    p_id in DEPARTMENT_EMPLOYEE.id%TYPE,
+    p_dep_id in DEPARTMENT_EMPLOYEE.department_id%TYPE,
+    p_emp_id in DEPARTMENT_EMPLOYEE.employee_id%TYPE
+);
+PROCEDURE delete_department_employee
+(
+    p_id in DEPARTMENT_EMPLOYEE.id%TYPE
+);
+END DEPARTMENT_EMPLOYEE_tapi;
+--/
+
+--/
+create or replace package body DEPARTMENT_EMPLOYEE_tapi
+is
+PROCEDURE create_department_employee
 (
     p_dep_id in DEPARTMENT_EMPLOYEE.department_id%TYPE,
     p_emp_id in DEPARTMENT_EMPLOYEE.employee_id%TYPE
@@ -1232,10 +1463,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_branch_department
+PROCEDURE update_branch_department
 (
     p_id in DEPARTMENT_EMPLOYEE.id%TYPE,
     p_dep_id in DEPARTMENT_EMPLOYEE.department_id%TYPE,
@@ -1252,10 +1481,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_department_employee
+PROCEDURE delete_department_employee
 (
     p_id in DEPARTMENT_EMPLOYEE.id%TYPE
 )
@@ -1264,13 +1491,38 @@ BEGIN
     DELETE FROM DEPARTMENT_EMPLOYEE WHERE id = p_id;
     COMMIT;
 END;
+END;
 --/
 
 
 
 -- TALONS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_talon
+create or replace package TALONS_tapi
+is
+PROCEDURE create_talon
+(
+    p_t_date in VARCHAR2,
+    p_emp_id in TALONS.employee_id%TYPE
+);
+PROCEDURE update_talon
+(
+    p_id in TALONS.id%TYPE,
+    p_t_date in VARCHAR2,
+    p_emp_id in TALONS.employee_id%TYPE,
+    p_patient_id in TALONS.patient_id%TYPE
+);
+PROCEDURE delete_talon
+(
+    p_id in TALONS.id%TYPE
+);
+END TALONS_tapi;
+--/
+
+--/
+create or replace package body TALONS_tapi
+is
+PROCEDURE create_talon
 (
     p_t_date in VARCHAR2,
     p_emp_id in TALONS.employee_id%TYPE
@@ -1295,10 +1547,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_talon
+PROCEDURE update_talon
 (
     p_id in TALONS.id%TYPE,
     p_t_date in VARCHAR2,
@@ -1317,10 +1567,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_talon
+PROCEDURE delete_talon
 (
     p_id in TALONS.id%TYPE
 )
@@ -1329,13 +1577,37 @@ BEGIN
     DELETE FROM TALONS WHERE id = p_id;
     COMMIT;
 END;
+END;
 --/
 
 
 
 -- SUPPLIERS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_supplier
+create or replace package SUPPLIERS_tapi
+is
+PROCEDURE create_supplier
+(
+    p_supplier_name in SUPPLIERS.supplier_name%TYPE,
+    p_supplier_country in SUPPLIERS.supplier_country%TYPE
+);
+PROCEDURE update_supplier
+(
+    p_id in SUPPLIERS.id%TYPE,
+    p_supplier_name in SUPPLIERS.supplier_name%TYPE,
+    p_supplier_country in SUPPLIERS.supplier_country%TYPE
+);
+PROCEDURE delete_supplier
+(
+    p_id in SUPPLIERS.id%TYPE
+);
+END SUPPLIERS_tapi;
+--/
+
+--/
+create or replace package body SUPPLIERS_tapi
+is
+PROCEDURE create_supplier
 (
     p_supplier_name in SUPPLIERS.supplier_name%TYPE,
     p_supplier_country in SUPPLIERS.supplier_country%TYPE
@@ -1360,10 +1632,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_supplier
+PROCEDURE update_supplier
 (
     p_id in SUPPLIERS.id%TYPE,
     p_supplier_name in SUPPLIERS.supplier_name%TYPE,
@@ -1380,10 +1650,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_supplier
+PROCEDURE delete_supplier
 (
     p_id in SUPPLIERS.id%TYPE
 )
@@ -1392,13 +1660,43 @@ BEGIN
     DELETE FROM SUPPLIERS WHERE id = p_id;
     COMMIT;
 END;
+END;
 --/
 
 
 
 -- PHARMACY PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_drug
+create or replace package PHARMACY_tapi
+is
+PROCEDURE create_drug
+(
+    p_drug in PHARMACY.drug%TYPE,
+    p_price in PHARMACY.price%TYPE,
+    p_stock in  PHARMACY.stock%TYPE,
+    p_need_recipe in PHARMACY.need_recipe%TYPE,
+    p_supplier_id in PHARMACY.supplier_id%TYPE
+);
+PROCEDURE update_drug
+(
+    p_id in PHARMACY.id%TYPE,
+    p_drug in PHARMACY.drug%TYPE,
+    p_price in PHARMACY.price%TYPE,
+    p_stock in  PHARMACY.stock%TYPE,
+    p_need_recipe in PHARMACY.need_recipe%TYPE,
+    p_supplier_id in PHARMACY.supplier_id%TYPE
+);
+PROCEDURE delete_drug
+(
+    p_id in PHARMACY.id%TYPE
+);
+END PHARMACY_tapi;
+--/
+
+--/
+create or replace package body PHARMACY_tapi
+is
+PROCEDURE create_drug
 (
     p_drug in PHARMACY.drug%TYPE,
     p_price in PHARMACY.price%TYPE,
@@ -1438,10 +1736,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_drug
+PROCEDURE update_drug
 (
     p_id in PHARMACY.id%TYPE,
     p_drug in PHARMACY.drug%TYPE,
@@ -1464,10 +1760,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_drug
+PROCEDURE delete_drug
 (
     p_id in PHARMACY.id%TYPE
 )
@@ -1476,13 +1770,39 @@ BEGIN
     DELETE FROM PHARMACY WHERE id = p_id;
     COMMIT;
 END;
+END;
 --/
 
 
 
 -- COMMENTS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_comment
+create or replace package COMMENTS_tapi
+is
+PROCEDURE create_comment
+(
+    p_user_id in COMMENTS.user_id%TYPE,
+    p_employee_id in COMMENTS.employee_id%TYPE,
+    p_comment_text in COMMENTS.comment_text%TYPE
+);
+PROCEDURE update_comment
+(
+    p_id in COMMENTS.id%TYPE,
+    p_user_id in COMMENTS.user_id%TYPE,
+    p_employee_id in COMMENTS.employee_id%TYPE,
+    p_comment_text in COMMENTS.comment_text%TYPE
+);
+PROCEDURE delete_comment
+(
+    p_id in COMMENTS.id%TYPE
+);
+END COMMENTS_tapi;
+--/
+
+--/
+create or replace package body COMMENTS_tapi
+is
+PROCEDURE create_comment
 (
     p_user_id in COMMENTS.user_id%TYPE,
     p_employee_id in COMMENTS.employee_id%TYPE,
@@ -1512,10 +1832,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_comment
+PROCEDURE update_comment
 (
     p_id in COMMENTS.id%TYPE,
     p_user_id in COMMENTS.user_id%TYPE,
@@ -1534,10 +1852,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_comment
+PROCEDURE delete_comment
 (
     p_id in COMMENTS.id%TYPE
 )
@@ -1546,13 +1862,39 @@ BEGIN
     DELETE FROM COMMENTS WHERE id = p_id;
     COMMIT;
 END;
+END;
 --/
 
 
 
 -- PRICELIST PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_listitem
+create or replace package PRICELIST_tapi
+is
+PROCEDURE create_listitem
+(
+    p_pos_id in PRICELIST.position_id%TYPE,
+    p_service in PRICELIST.service%TYPE,
+    p_price in PRICELIST.price%TYPE
+);
+PROCEDURE update_listitem
+(
+    p_id in PHARMACY.id%TYPE,
+    p_pos_id in PRICELIST.position_id%TYPE,
+    p_service in PRICELIST.service%TYPE,
+    p_price in PRICELIST.price%TYPE
+);
+PROCEDURE delete_listitem
+(
+    p_id in PRICELIST.id%TYPE
+);
+END PRICELIST_tapi;
+--/
+
+--/
+create or replace package body PRICELIST_tapi
+is
+PROCEDURE create_listitem
 (
     p_pos_id in PRICELIST.position_id%TYPE,
     p_service in PRICELIST.service%TYPE,
@@ -1582,10 +1924,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_listitem
+PROCEDURE update_listitem
 (
     p_id in PHARMACY.id%TYPE,
     p_pos_id in PRICELIST.position_id%TYPE,
@@ -1604,10 +1944,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_listitem
+PROCEDURE delete_listitem
 (
     p_id in PRICELIST.id%TYPE
 )
@@ -1616,13 +1954,46 @@ BEGIN
     DELETE FROM PRICELIST WHERE id = p_id;
     COMMIT;
 END;
+END;
 --/
 
 
 
 -- TREATMENTS PROCEDURES
 --/
-CREATE OR REPLACE PROCEDURE create_treatment
+create or replace package TREATMENTS_tapi
+is
+PROCEDURE create_treatment
+(
+    p_emp_id in TREATMENTS.employee_id%TYPE,
+    p_patient_id in TREATMENTS.patient_id%TYPE,
+    p_start in VARCHAR2,
+    p_diagnosis in TREATMENTS.diagnosis%TYPE,
+    p_info in TREATMENTS.treatment_info%TYPE,
+    p_recomms in TREATMENTS.recommendations%TYPE
+);
+PROCEDURE update_treatment
+(
+    p_id in TREATMENTS.id%TYPE,
+    p_emp_id in TREATMENTS.employee_id%TYPE,
+    p_patient_id in TREATMENTS.patient_id%TYPE,
+    p_start in VARCHAR2,
+    p_end in VARCHAR2,
+    p_diagnosis in TREATMENTS.diagnosis%TYPE,
+    p_info in TREATMENTS.treatment_info%TYPE,
+    p_recomms in TREATMENTS.recommendations%TYPE
+);
+PROCEDURE delete_treatment
+(
+    p_id in TREATMENTS.id%TYPE
+);
+END TREATMENTS_tapi;
+--/
+
+--/
+create or replace package body TREATMENTS_tapi
+is
+PROCEDURE create_treatment
 (
     p_emp_id in TREATMENTS.employee_id%TYPE,
     p_patient_id in TREATMENTS.patient_id%TYPE,
@@ -1667,10 +2038,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE update_treatment
+PROCEDURE update_treatment
 (
     p_id in TREATMENTS.id%TYPE,
     p_emp_id in TREATMENTS.employee_id%TYPE,
@@ -1697,10 +2066,8 @@ EXCEPTION
     WHEN OTHERS THEN
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
---/
 
---/
-CREATE OR REPLACE PROCEDURE delete_treatment
+PROCEDURE delete_treatment
 (
     p_id in TREATMENTS.id%TYPE
 )
@@ -1708,6 +2075,7 @@ IS
 BEGIN
     DELETE FROM TREATMENTS WHERE id = p_id;
     COMMIT;
+END;
 END;
 --/
 
@@ -1742,3 +2110,390 @@ BEGIN
     RETURN DBMS_LOB.compare(hash, user_password);
 END;
 --/
+
+--/
+CREATE OR REPLACE PROCEDURE book_talon
+(
+    p_patient_id in TALONS.patient_id%TYPE,
+    talon_id in TALONS.id%TYPE
+)
+IS
+    empty_parameter_ex EXCEPTION;
+BEGIN
+    IF p_patient_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF talon_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    BEGIN
+        TALONS_tapi.update_talon(talon_id, null, null, p_patient_id);
+    END;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
+END;
+--/
+
+--/
+CREATE OR REPLACE PROCEDURE unbook_talon
+(
+    talon_id in TALONS.id%TYPE
+)
+IS
+    empty_parameter_ex EXCEPTION;
+BEGIN    
+    IF talon_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    UPDATE TALONS
+    SET patient_id = NULL
+    WHERE ID = talon_id;
+    COMMIT;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
+END;
+--/
+
+--/
+CREATE OR REPLACE PROCEDURE link_person_address
+(
+    p_person_id in PERSON_ADDRESS.person_id%TYPE,
+    p_address_id in PERSON_ADDRESS.address_id%TYPE
+)
+IS
+    empty_parameter_ex EXCEPTION;
+BEGIN
+    IF p_person_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+    
+    IF p_address_id IS NULL THEN
+        RAISE empty_parameter_ex;
+    END IF;
+
+    BEGIN
+        PERSON_ADDRESS_tapi.create_person_address(p_person_id, p_address_id);
+    END;
+EXCEPTION
+    WHEN empty_parameter_ex THEN
+        dbms_output.put_line('Empty parameter');
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
+END;
+--/
+
+--/
+BEGIN
+    PERSON_ADDRESS_tapi.create_person_address(1, 1);
+END;
+--/
+
+--/
+BEGIN
+    ADDRESSES_tapi.create_address('Минск','Минск','Бобруйская','25','418');
+END;
+--/
+
+
+-- MASKING DATA
+DROP ROLE patient;
+CREATE USER patient IDENTIFIED BY pat123;
+GRANT CREATE SESSION TO patient;
+GRANT SELECT ON TREATMENTS TO patient;
+--/
+BEGIN DBMS_REDACT.ADD_POLICY(
+    object_schema => 'system',
+    object_name => 'treatments',
+    column_name => 'treatment_info',
+    policy_name => 'mask_treatment_info',
+    function_type => DBMS_REDACT.FULL,
+    expression => '1=1');
+END;
+--/
+-- TRIGERS FOR "AFTER DELETE" TYPE OF DML OPERATIONS
+
+-- SET PATIENT_ID TO NULL IN TALONS, WHEN PATIENT_ID PATIENT DELETE
+--/
+CREATE OR REPLACE TRIGGER PATIENT_AFTER_DELETE
+AFTER DELETE ON PATIENTS
+FOR EACH ROW
+BEGIN
+    UPDATE TALONS SET PATIENT_ID = NULL WHERE PATIENT_ID = :old.ID;
+END;
+--/
+
+-- SET EMPLOYEE_ID TO NULL IN DEPARTMENT_EMPLOYEE, WHEN EMPLOYEE_ID PATIENT DELETE
+--/
+CREATE OR REPLACE TRIGGER EMPLOYEE_AFTER_DELETE
+AFTER DELETE ON EMPLOYEES
+FOR EACH ROW
+BEGIN
+    DELETE FROM DEPARTMENT_EMPLOYEE WHERE EMPLOYEE_ID = :old.ID;
+    DELETE FROM TALONS WHERE EMPLOYEE_ID = :old.ID;
+    DELETE FROM COMMENTS WHERE EMPLOYEE_ID = :old.ID;
+    UPDATE DEPARTMENTS SET DEPARTMENT_MANAGER = NULL WHERE DEPARTMENT_MANAGER = :old.ID;
+END;
+--/
+
+
+
+
+
+-- PROCEDURE FOR EXPORT TO JSON
+--/
+CREATE OR REPLACE DIRECTORY utl_dir AS 'D:\db'
+--/
+--/
+GRANT READ, WRITE ON DIRECTORY utl_dir TO public
+--/
+--/
+
+--/
+CREATE OR REPLACE PROCEDURE EXPORT_JSON
+IS
+  v_file UTL_FILE.FILE_TYPE;
+  v_cursor SYS_REFCURSOR;
+  v_row COMMENTS%ROWTYPE;
+  v_json CLOB;
+BEGIN
+  v_file := UTL_FILE.FOPEN('UTL_DIR', 'comments.json', 'W');
+  OPEN v_cursor FOR SELECT * FROM SYSTEM.COMMENTS;
+  v_json := '[';
+  LOOP
+    FETCH v_cursor INTO v_row;
+    EXIT WHEN v_cursor%NOTFOUND;
+
+    IF v_json != '[' THEN
+      v_json := v_json || ',';
+    END IF;
+
+    v_json := v_json || '{';
+    v_json := v_json || '"user_id":' || v_row.user_id || ',';
+    v_json := v_json || '"comment_text":"' || REPLACE(v_row.comment_text, '"', '\"') || '",';
+    v_json := v_json || '"employee_id":"' || REPLACE(v_row.employee_id, '"', '\"') || '"';
+    v_json := v_json || '}';
+  END LOOP;
+  CLOSE v_cursor;
+  v_json := v_json || ']';
+  UTL_FILE.PUT_LINE(v_file, v_json);
+  UTL_FILE.FCLOSE(v_file);
+END;
+--/
+
+
+--/
+CREATE OR REPLACE PROCEDURE IMPORT_JSON
+IS
+BEGIN
+    INSERT INTO COMMENTS (user_id, comment_text, employee_id)
+    SELECT user_id, comment_text, employee_id
+    FROM JSON_TABLE(BFILENAME('UTL_DIR', 'COMMENTS.JSON'), '$[*]' COLUMNS (
+            user_id INTEGER PATH '$.user_id',
+            comment_text VARCHAR2(1024) PATH '$.comment_text',
+            employee_id INTEGER PATH '$.employee_id'
+        )
+    );
+END;
+--/
+
+
+-- CREATING INDEXES
+CREATE INDEX talons_index ON TALONS (patient_id, employee_id, talon_date);
+CREATE INDEX pharmacy_index ON PHARMACY (drug, price);
+CREATE INDEX suppliers_index ON SUPPLIERS (supplier_name, supplier_country);
+CREATE INDEX treatments_index ON TREATMENTS (patient_id, employee_id);
+CREATE INDEX pricelist_index ON PRICELIST (position_id, service);
+
+
+-- CREATING ROLES
+-- USER ROLE
+CREATE ROLE "RL_USER";
+GRANT EXECUTE ON PATIENTS_tapi TO "RL_USER";
+GRANT EXECUTE ON PERSONS_tapi TO "RL_USER";
+GRANT EXECUTE ON PASSPORTS_tapi TO "RL_USER";
+GRANT EXECUTE ON ADDRESSES_tapi TO "RL_USER";
+GRANT EXECUTE ON BOOK_TALON TO "RL_USER";
+GRANT EXECUTE ON UNBOOK_TALON TO "RL_USER";
+GRANT EXECUTE ON PERSON_ADDRESS_tapi TO "RL_USER";
+GRANT EXECUTE ON COMMENTS_tapi TO "RL_USER";
+GRANT EXECUTE ON USERS_tapi TO "RL_USER";
+GRANT CREATE SESSION TO "RL_USER";
+
+CREATE PROFILE PUSER LIMIT
+    FAILED_LOGIN_ATTEMPTS 5
+    PASSWORD_LIFE_TIME 90
+    PASSWORD_GRACE_TIME 7;
+
+CREATE USER "USER"
+    IDENTIFIED BY user123
+    DEFAULT TABLESPACE TS_USERS
+    QUOTA UNLIMITED ON TS_USERS
+    PROFILE PUSER
+    ACCOUNT UNLOCK;
+    
+GRANT RL_USER TO "USER";
+
+
+
+-- DOCTOR ROLE
+CREATE ROLE RL_DOCTOR;
+GRANT EXECUTE ON TALONS_tapi TO RL_DOCTOR;
+GRANT EXECUTE ON TREATMENTS_tapi TO RL_DOCTOR;
+GRANT CREATE SESSION TO RL_DOCTOR;
+
+CREATE PROFILE PDOCTOR LIMIT
+    FAILED_LOGIN_ATTEMPTS 3
+    PASSWORD_LIFE_TIME UNLIMITED
+    PASSWORD_GRACE_TIME UNLIMITED
+    PASSWORD_LOCK_TIME UNLIMITED;
+
+CREATE USER "DOCTOR"
+    IDENTIFIED BY doctor123
+    DEFAULT TABLESPACE TS_USERS
+    QUOTA UNLIMITED ON TS_USERS
+    PROFILE PDOCTOR
+    ACCOUNT UNLOCK;
+    
+GRANT RL_DOCTOR TO "DOCTOR";
+
+
+
+-- PHARMACIST ROLE
+CREATE ROLE RL_PHARMACIST;
+GRANT EXECUTE ON SUPPLIERS_tapi TO RL_PHARMACIST;
+GRANT EXECUTE ON PHARMACY_tapi TO RL_PHARMACIST;
+GRANT CREATE SESSION TO RL_PHARMACIST;
+
+CREATE PROFILE PPHARMACIST LIMIT
+    FAILED_LOGIN_ATTEMPTS 3
+    PASSWORD_LIFE_TIME UNLIMITED
+    PASSWORD_GRACE_TIME UNLIMITED
+    PASSWORD_LOCK_TIME UNLIMITED;
+    
+CREATE USER "PHARMACIST"
+    IDENTIFIED BY phar123
+    DEFAULT TABLESPACE TS_USERS
+    QUOTA UNLIMITED ON TS_USERS
+    PROFILE PPHARMACIST
+    ACCOUNT UNLOCK;
+    
+GRANT RL_PHARMACIST TO "PHARMACIST";
+
+
+-- MANAGER ROLE
+CREATE ROLE RL_MANAGER;
+GRANT RL_USER TO RL_MANAGER;
+GRANT RL_PHARMACIST TO RL_MANAGER;
+GRANT RL_DOCTOR TO RL_MANAGER;
+GRANT EXECUTE ON EMPLOYEES_tapi TO RL_MANAGER;
+GRANT EXECUTE ON POSITIONS_tapi TO RL_MANAGER;
+GRANT EXECUTE ON DEPARTMENTS_tapi TO RL_MANAGER;
+GRANT EXECUTE ON DEPARTMENT_EMPLOYEE_tapi TO RL_MANAGER;
+GRANT EXECUTE ON PRICELIST_tapi TO RL_MANAGER;
+GRANT CREATE SESSION,
+      CREATE PROCEDURE,
+      CREATE TABLE,
+      CREATE TRIGGER TO RL_MANAGER;
+
+CREATE PROFILE PMANAGER LIMIT
+    FAILED_LOGIN_ATTEMPTS 3
+    PASSWORD_LIFE_TIME UNLIMITED
+    PASSWORD_GRACE_TIME UNLIMITED
+    PASSWORD_LOCK_TIME UNLIMITED;
+    
+CREATE USER "MANAGER"
+    IDENTIFIED BY manager123
+    DEFAULT TABLESPACE TS_USERS
+    QUOTA UNLIMITED ON TS_USERS
+    PROFILE PMANAGER
+    ACCOUNT UNLOCK;
+    
+GRANT RL_MANAGER TO "MANAGER";
+
+
+--/
+CREATE OR REPLACE PROCEDURE generate_suppliers
+IS 
+BEGIN
+    for i in 1..100000 loop
+        insert into suppliers (supplier_name, supplier_country)
+        values (
+        case floor(dbms_random.value(1, 31)) -- Generate a random value from the list for the column supplier_name
+            when 1 then 'Roche'
+            when 2 then 'Novartis'
+            when 3 then 'Merck'
+            when 4 then 'AbbVie'
+            when 5 then 'Janssen'
+            when 6 then 'GlaxoSmithKline'
+            when 7 then 'Bristol Myers Squibb'
+            when 8 then 'Pfizer'
+            when 9 then 'Sanofi'
+            when 10 then 'Takeda'
+            when 11 then 'AstraZeneca'
+            when 12 then 'Gilead'
+            when 13 then 'Lilly'
+            when 14 then 'Amgen'
+            when 15 then 'Bayer'
+            when 16 then 'Novo Nordisk'
+            when 17 then 'Boehringer Ingelheim'
+            when 18 then 'Teva'
+            when 19 then 'Biogen'
+            when 20 then 'Viatris'
+            when 21 then 'Roche Pharma'
+            when 22 then 'Novartis Oncology'
+            when 23 then 'Merck Serono'
+            when 24 then 'Abbott'
+            when 25 then 'Johnson & Johnson'
+            when 26 then 'GlaxoSmithKline Consumer Healthcare'
+            when 27 then 'Bristol Myers Squibb India'
+            when 28 then 'Pfizer Consumer Healthcare'
+            when 29 then 'Sanofi Pasteur'
+            when 30 then 'Takeda Oncology'        
+        end,
+        case floor(dbms_random.value(1, 21)) -- Generate a random value from the list for the column supplier_country
+            when 1 then 'Belarus'
+            when 2 then 'Russia'
+            when 3 then 'Ukraine'
+            when 4 then 'Poland'
+            when 5 then 'Lithuania'
+            when 6 then 'Germany'
+            when 7 then 'France'
+            when 8 then 'China'
+            when 9 then 'Italy'
+            when 10 then 'Spain'
+            when 11 then 'United Kingdom'
+            when 12 then 'United States'
+            when 13 then 'Canada'
+            when 14 then 'Brazil'
+            when 15 then 'India'
+            when 16 then 'Japan'
+            when 17 then 'Australia'
+            when 18 then 'South Africa'
+            when 19 then 'Sweden'
+            when 20 then 'Norway'        
+        end
+        );
+    end loop;
+    commit;
+END;
+--/
+
+
+--/
+BEGIN
+    generate_suppliers();
+END;
+--/
+
+ALTER INDEX suppliers_index UNUSABLE;
+ALTER INDEX suppliers_country_index UNUSABLE;
+ALTER INDEX suppliers_index REBUILD;
