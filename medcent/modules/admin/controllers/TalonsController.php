@@ -150,16 +150,19 @@ class TalonsController extends Controller
         $model = $this->findModel($ID);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-            $command = Yii::$app->db->createCommand('BEGIN update_talon(:t_id, :t_date, :t_emp, :t_pat); END;')
-                    ->bindValue(':t_id', $model->ID)
-                    ->bindValue(':t_date', $model->TALON_DATE)
-                    ->bindValue(':t_emp', $model->EMPLOYEE_ID)
-                    ->bindValue(':t_pat', $model->PATIENT_ID);
-
-            if ($command->execute()) {
+            $isTalonExists = Talons::findOne(['EMPLOYEE_ID' => $model->EMPLOYEE_ID, 'TALON_DATE' => $model->TALON_DATE]);
+                
+            if ($isTalonExists) {
+                Yii::$app->getSession()->setFlash('error', 'Talon already exists!');
+                return $this->render('create', [
+                    'model' => $model
+                ]);
+            }
+            
+            if ($model->save())
+            {
                 return $this->redirect(['view', 'ID' => $model->ID]);
             }
-
         }
 
         return $this->render('update', [

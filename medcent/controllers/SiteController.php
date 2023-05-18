@@ -15,6 +15,7 @@ use app\models\Users;
 use app\models\Talons;
 use app\models\Comments;
 use app\models\Pharmacy;
+use app\models\BookTalon;
 
 class SiteController extends Controller
 {
@@ -154,6 +155,7 @@ class SiteController extends Controller
     public function actionBookTalon($id)
     {
         $model = Talons::findOne($id);
+        $bookTalon = new BookTalon();
         $userID = Yii::$app->user->identity->ID;
 
         $patients = (new Query)
@@ -164,19 +166,28 @@ class SiteController extends Controller
             ->addParams([':auth_data' => $userID])
             ->all();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->getSession()->setFlash('success', 'Талон забронирован');
-            return $this->redirect('/user');
+        if ($bookTalon->load(Yii::$app->request->post())) {
+            $model->PATIENT_ID = $bookTalon->PATIENT_ID;
+
+            if ($model->save())
+            {
+                Yii::$app->getSession()->setFlash('success', 'Талон забронирован');
+                return $this->redirect('/user');
+            }
         }
 
         return $this->render('book-talon', [
-            'model' => $model,
+            'bookTalon' => $bookTalon,
             'patients' => $patients
         ]);
     }
 
     public function actionLeaveComment()
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect('login');
+        }
+
         $model = new Comments();
         $model->ID = (Comments::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0) + 1;
         $model->USER_ID = Yii::$app->user->identity->ID;

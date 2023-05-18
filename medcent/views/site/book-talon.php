@@ -26,7 +26,7 @@ $userId = Yii::$app->user->identity->EMAIL;
         }
     ?>
 
-    <?= $form->field($model, 'PATIENT_ID')->dropDownList($listP, ['prompt' => 'Выберите пациента']) ?>
+    <?= $form->field($bookTalon, 'PATIENT_ID')->dropDownList($listP, ['prompt' => 'Выберите пациента']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

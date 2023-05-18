@@ -140,7 +140,6 @@ class UsersController extends Controller
 
         $model = $this->findModel($ID);
         $old_password = $model->PASSWORD;
-        echo "$old_password";
 
         if ($this->request->isPost && $model->load($this->request->post())) {
             if ($old_password == $model->PASSWORD)

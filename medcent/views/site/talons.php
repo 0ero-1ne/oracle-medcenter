@@ -1,5 +1,5 @@
 <?php
-    $talonsBypositions = [];
+    $talonsByPositions = [];
 
     foreach ($talons as $talon) {
         $emp = $talon['POSITION_NAME'] . getDeaprtmentInfo($talon);
