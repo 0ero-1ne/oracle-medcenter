@@ -935,8 +935,6 @@ END;
 END;
 --/
 
-
-
 -- PERSON_ADDRESS PROCEDURES
 --/
 create or replace package PERSON_ADDRESS_tapi
@@ -1247,6 +1245,9 @@ IS
 BEGIN
     DELETE FROM EMPLOYEES WHERE id = p_id;
     COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('Procedure error! Check you parameters');
 END;
 END;
 --/
@@ -1260,12 +1261,14 @@ is
 PROCEDURE create_department
 (
     p_dep_name in DEPARTMENTS.department_name%TYPE,
+    p_dep_address in DEPARTMENTS.address_id%TYPE,
     p_dep_manager in DEPARTMENTS.department_manager%TYPE
 );
 PROCEDURE update_department
 (
     p_id in DEPARTMENTS.id%TYPE,
     p_dep_name in DEPARTMENTS.department_name%TYPE,
+    p_dep_address in DEPARTMENTS.address_id%TYPE,
     p_dep_manager in DEPARTMENTS.department_manager%TYPE
 );
 PROCEDURE delete_department
@@ -1281,6 +1284,7 @@ is
 PROCEDURE create_department
 (
     p_dep_name in DEPARTMENTS.department_name%TYPE,
+    p_dep_address in DEPARTMENTS.address_id%TYPE,
     p_dep_manager in DEPARTMENTS.department_manager%TYPE
 )
 IS
@@ -1290,7 +1294,7 @@ BEGIN
         RAISE empty_parameter_ex;
     END IF;
     
-    INSERT INTO DEPARTMENTS(department_name, department_manager) VALUES (TRIM(p_dep_name), p_dep_manager);
+    INSERT INTO DEPARTMENTS(department_name, address_id, department_manager) VALUES (TRIM(p_dep_name), p_dep_address, p_dep_manager);
     COMMIT;
 EXCEPTION
     WHEN empty_parameter_ex THEN
@@ -1303,12 +1307,14 @@ PROCEDURE update_department
 (
     p_id in DEPARTMENTS.id%TYPE,
     p_dep_name in DEPARTMENTS.department_name%TYPE,
+    p_dep_address in DEPARTMENTS.address_id%TYPE,
     p_dep_manager in DEPARTMENTS.department_manager%TYPE
 )
 IS
 BEGIN
     UPDATE DEPARTMENTS
     SET department_name = nvl(TRIM(p_dep_name), department_name),
+        address_id = nvl(p_dep_address, address_id),
         department_manager = nvl(p_dep_manager, department_manager)
     WHERE id = p_id;
     COMMIT;
@@ -1423,7 +1429,7 @@ PROCEDURE create_department_employee
     p_dep_id in DEPARTMENT_EMPLOYEE.department_id%TYPE,
     p_emp_id in DEPARTMENT_EMPLOYEE.employee_id%TYPE
 );
-PROCEDURE update_branch_department
+PROCEDURE update_department_employee
 (
     p_id in DEPARTMENT_EMPLOYEE.id%TYPE,
     p_dep_id in DEPARTMENT_EMPLOYEE.department_id%TYPE,
@@ -1464,7 +1470,7 @@ EXCEPTION
         dbms_output.put_line('Procedure error! Check you parameters');
 END;
 
-PROCEDURE update_branch_department
+PROCEDURE update_department_employee
 (
     p_id in DEPARTMENT_EMPLOYEE.id%TYPE,
     p_dep_id in DEPARTMENT_EMPLOYEE.department_id%TYPE,
@@ -1968,6 +1974,7 @@ PROCEDURE create_treatment
     p_emp_id in TREATMENTS.employee_id%TYPE,
     p_patient_id in TREATMENTS.patient_id%TYPE,
     p_start in VARCHAR2,
+    p_end in VARCHAR2,
     p_diagnosis in TREATMENTS.diagnosis%TYPE,
     p_info in TREATMENTS.treatment_info%TYPE,
     p_recomms in TREATMENTS.recommendations%TYPE
@@ -1998,6 +2005,7 @@ PROCEDURE create_treatment
     p_emp_id in TREATMENTS.employee_id%TYPE,
     p_patient_id in TREATMENTS.patient_id%TYPE,
     p_start in VARCHAR2,
+    p_end in VARCHAR2,
     p_diagnosis in TREATMENTS.diagnosis%TYPE,
     p_info in TREATMENTS.treatment_info%TYPE,
     p_recomms in TREATMENTS.recommendations%TYPE
@@ -2030,7 +2038,7 @@ BEGIN
     END IF;
     
     INSERT INTO TREATMENTS(employee_id, patient_id, start_of_treatment, end_of_treatment, diagnosis, treatment_info, recommendations)
-    VALUES (p_emp_id, p_patient_id, to_date(TRIM(p_start), 'dd.mm.yyyy hh24:mi'), null, TRIM(p_diagnosis), TRIM(p_info), TRIM(p_recomms));
+    VALUES (p_emp_id, p_patient_id, to_date(TRIM(p_start), 'dd.mm.yyyy hh24:mi'), to_date(TRIM(p_end), 'dd.mm.yyyy hh24:mi'), TRIM(p_diagnosis), TRIM(p_info), TRIM(p_recomms));
     COMMIT;
 EXCEPTION
     WHEN empty_parameter_ex THEN
@@ -2215,8 +2223,8 @@ CREATE OR REPLACE TRIGGER PATIENT_AFTER_DELETE
 AFTER DELETE ON PATIENTS
 FOR EACH ROW
 BEGIN
+    DELETE FROM SYSTEM.TREATMENTS WHERE PATIENT_ID = :old.ID;
     UPDATE TALONS SET PATIENT_ID = NULL WHERE PATIENT_ID = :old.ID;
-    DELETE FROM TREATMENTS WHERE PATIENT_ID = :old.PATIENT_ID;
 END;
 --/
 
@@ -2229,11 +2237,20 @@ BEGIN
     DELETE FROM DEPARTMENT_EMPLOYEE WHERE EMPLOYEE_ID = :old.ID;
     DELETE FROM TALONS WHERE EMPLOYEE_ID = :old.ID;
     DELETE FROM COMMENTS WHERE EMPLOYEE_ID = :old.ID;
-    DELETE FROM TREATMENTS WHERE EMPLOYEE_ID = :old.EMPLOYEE_ID;
+    DELETE FROM TREATMENTS WHERE EMPLOYEE_ID = :old.ID;
     UPDATE DEPARTMENTS SET DEPARTMENT_MANAGER = NULL WHERE DEPARTMENT_MANAGER = :old.ID;
 END;
 --/
 
+--/
+CREATE OR REPLACE TRIGGER USER_AFTER_DELETE
+AFTER DELETE ON USERS
+FOR EACH ROW
+BEGIN
+    DELETE FROM PATIENTS WHERE AUTH_DATA = :old.ID;
+    DELETE FROM EMPLOYEES WHERE AUTH_DATA = :old.ID;
+END;
+--/
 
 
 
@@ -2244,7 +2261,6 @@ CREATE OR REPLACE DIRECTORY utl_dir AS 'D:\db'
 --/
 --/
 GRANT READ, WRITE ON DIRECTORY utl_dir TO public
---/
 --/
 
 --/
@@ -2476,3 +2492,4 @@ BEGIN
     commit;
 END;
 --/
+
