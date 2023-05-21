@@ -32,16 +32,17 @@ class SignupForm extends Model
     public function signup()
     {   
         if (!$this->getUser()) {
-            $userId = (Users::find()->orderBy(['ID' => SORT_DESC])->one()->ID + 1);
-            $newUser = new Users();
-            $newUser->ID = $userId;
-            $newUser->USER_ROLE = 'user';
-            $newUser->EMAIL = $this->email;
-            $newUser->setPassword($this->password);
+            $email = $this->email;
+            $password = $this->password;
 
-            if ($newUser->save()) {
-                return Yii::$app->user->login(Users::findOne(['EMAIL' => $this->email]), $this->rememberMe ? 3600*24*30 : 0);
-            }
+            $command = Yii::$app->db->createCommand("
+                BEGIN system.users_tapi.create_user('user', :email, :password); END;
+            ")
+            ->bindParam(':email', $email)
+            ->bindParam(':password', $password)
+            ->execute();
+
+            return Yii::$app->user->login(Users::findOne(['EMAIL' => $this->email]), $this->rememberMe ? 3600*24*30 : 0);
         }
     }
 

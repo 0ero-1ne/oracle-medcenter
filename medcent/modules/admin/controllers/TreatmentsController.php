@@ -98,13 +98,31 @@ class TreatmentsController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Treatments::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Treatments();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+            if ($model->load($this->request->post())) {
+                $employee = $model->EMPLOYEE_ID;
+                $patient = $model->PATIENT_ID;
+                $start = $model->START_OF_TREATMENT;
+                $end = $model->END_OF_TREATMENT;
+                $diagnosis = $model->DIAGNOSIS;
+                $info = $model->TREATMENT_INFO;
+                $recs = $model->RECOMMENDATIONS;
+
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.treatments_tapi.create_treatment(:emp, :pat, :start, :end, :diag, :info, :recs); END;
+                ')
+                ->bindParam(':emp', $employee)
+                ->bindParam(':pat', $patient)
+                ->bindParam(':start', $start)
+                ->bindParam(':end', $end)
+                ->bindParam(':diag', $diagnosis)
+                ->bindParam(':info', $info)
+                ->bindParam(':recs', $recs)
+                ->execute();
+
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -136,7 +154,28 @@ class TreatmentsController extends Controller
 
         $model = $this->findModel($ID);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $employee = $model->EMPLOYEE_ID;
+            $patient = $model->PATIENT_ID;
+            $start = $model->START_OF_TREATMENT;
+            $end = $model->END_OF_TREATMENT;
+            $diagnosis = $model->DIAGNOSIS;
+            $info = $model->TREATMENT_INFO;
+            $recs = $model->RECOMMENDATIONS;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.treatments_tapi.update_treatment(:id, :emp, :pat, :start, :end, :diag, :info, :recs); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':emp', $employee)
+            ->bindParam(':pat', $patient)
+            ->bindParam(':start', $start)
+            ->bindParam(':end', $end)
+            ->bindParam(':diag', $diagnosis)
+            ->bindParam(':info', $info)
+            ->bindParam(':recs', $recs)
+            ->execute();
+
             return $this->redirect(['view', 'ID' => $model->ID]);
         }
 
@@ -164,7 +203,11 @@ class TreatmentsController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.treatments_tapi.delete_treatment(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

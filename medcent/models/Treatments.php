@@ -35,7 +35,7 @@ class Treatments extends \yii\db\ActiveRecord
     {
         return [
             [['ID', 'EMPLOYEE_ID', 'PATIENT_ID'], 'integer'],
-            [['EMPLOYEE_ID', 'PATIENT_ID', 'START_OF_TREATMENT', 'END_OF_TREATMENT', 'DIAGNOSIS', 'TREATMENT_INFO', 'RECOMMENDATIONS'], 'required'],
+            [['EMPLOYEE_ID', 'PATIENT_ID', 'START_OF_TREATMENT', 'DIAGNOSIS', 'TREATMENT_INFO', 'RECOMMENDATIONS'], 'required'],
             [['START_OF_TREATMENT', 'END_OF_TREATMENT'], 'string', 'max' => 16],
             [['DIAGNOSIS'], 'string', 'max' => 256],
             [['TREATMENT_INFO', 'RECOMMENDATIONS'], 'string', 'max' => 1024],

@@ -98,13 +98,25 @@ class PassportsController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Passports::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Passports();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+            if ($model->load($this->request->post())) {
+                $number = $model->PASSPORT_NUMBER;
+                $issue_date = $model->DATE_OF_ISSUE;
+                $expiry_date = $model->DATE_OF_EXPIRY;
+                $authority = $model->AUTHORITY;
+
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.passports_tapi.create_passport(:number, :issue, :expiry, :authority); END;
+                ')
+                ->bindParam(':number', $number)
+                ->bindParam(':issue', $issue_date)
+                ->bindParam(':expiry', $expiry_date)
+                ->bindParam(':authority', $authority)
+                ->execute();
+
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -135,8 +147,25 @@ class PassportsController extends Controller
         }
 
         $model = $this->findModel($ID);
+        $model->DATE_OF_ISSUE = substr($model->DATE_OF_ISSUE, 0, 10);
+        $model->DATE_OF_EXPIRY = substr($model->DATE_OF_EXPIRY, 0, 10);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $number = $model->PASSPORT_NUMBER;
+            $issue_date = $model->DATE_OF_ISSUE;
+            $expiry_date = $model->DATE_OF_EXPIRY;
+            $authority = $model->AUTHORITY;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.passports_tapi.update_passport(:id, :number, :issue, :expiry, :authority); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':number', $number)
+            ->bindParam(':issue', $issue_date)
+            ->bindParam(':expiry', $expiry_date)
+            ->bindParam(':authority', $authority)
+            ->execute();
+
             return $this->redirect(['view', 'ID' => $model->ID]);
         }
 
@@ -164,7 +193,11 @@ class PassportsController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.passports_tapi.delete_passport(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

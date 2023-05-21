@@ -98,18 +98,28 @@ class PersonsController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Persons::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Persons();
-        $model->ID = $last_id + 1;
 
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                //$model->BIRTH_DATE = Yii::$app->formatter->asDate($model->BIRTH_DATE);
+                $first_name = $model->FIRST_NAME;
+                $second_name = $model->SECOND_NAME;
+                $last_name = $model->LAST_NAME;
+                $birth_date = $model->BIRTH_DATE;
+                $gender = $model->GENDER;
 
-                if ($model->save()) {
-                    return $this->redirect(['view', 'ID' => $model->ID]);
-                }
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.persons_tapi.create_person(:first_name, :second_name, :last_name, null, :birth_date, :gender); END;
+                ')
+                ->bindParam(':first_name', $first_name)
+                ->bindParam(':second_name', $second_name)
+                ->bindParam(':last_name', $last_name)
+                ->bindParam(':birth_date', $birth_date)
+                ->bindParam(':gender', $gender)
+                ->execute();
+                
+                return $this->redirect('/admin/persons');
             }
         } else {
             $model->loadDefaultValues();
@@ -140,9 +150,28 @@ class PersonsController extends Controller
         }
 
         $model = $this->findModel($ID);
+        $model->BIRTH_DATE = substr($model->BIRTH_DATE, 0,  10);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'ID' => $model->ID]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $first_name = $model->FIRST_NAME;
+            $second_name = $model->SECOND_NAME;
+            $last_name = $model->LAST_NAME;
+            $birth_date = $model->BIRTH_DATE;
+            $gender = $model->GENDER;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.persons_tapi.update_person(:id, :first_name, :second_name, :last_name, null, :birth_date, :gender); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':first_name', $first_name)
+            ->bindParam(':second_name', $second_name)
+            ->bindParam(':last_name', $last_name)
+            ->bindParam(':birth_date', $birth_date)
+            ->bindParam(':gender', $gender)
+            ->execute();
+
+
+            return $this->redirect('/admin/persons');
         }
 
         return $this->render('update', [
@@ -169,7 +198,11 @@ class PersonsController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.persons_tapi.delete_person(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

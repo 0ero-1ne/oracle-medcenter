@@ -104,9 +104,29 @@ class EmployeesController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                if ($model->save()) {
-                    return $this->redirect(['view', 'ID' => $model->ID]);
-                }
+                $auth = $model->AUTH_DATA;
+                $person = $model->PERSON_ID;
+                $position = $model->POSITION_ID;
+                $hire_date = $model->HIRE_DATE;
+                $education = $model->EDUCATION;
+                $phone = $model->PHONE;
+                $salary = $model->SALARY;
+                $vacation = $model->ON_VACATION;
+
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.employees_tapi.create_employee(:auth, :person, :position, :hire, :education, :phone, :salary, :vacation); END;
+                ')
+                ->bindParam(':auth', $auth)
+                ->bindParam(':person', $person)
+                ->bindParam(':position', $position)
+                ->bindParam(':hire', $hire_date)
+                ->bindParam(':education', $education)
+                ->bindParam(':phone', $phone)
+                ->bindParam(':salary', $salary)
+                ->bindParam(':vacation', $vacation)
+                ->execute();
+
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -139,9 +159,30 @@ class EmployeesController extends Controller
         $model = $this->findModel($ID);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-            if ($model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
-            }
+            $auth = $model->AUTH_DATA;
+            $person = $model->PERSON_ID;
+            $position = $model->POSITION_ID;
+            $hire_date = $model->HIRE_DATE;
+            $education = $model->EDUCATION;
+            $phone = $model->PHONE;
+            $salary = $model->SALARY;
+            $vacation = $model->ON_VACATION;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.employees_tapi.update_employee(:id, :auth, :person, :position, :hire, :education, :phone, :salary, :vacation); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':auth', $auth)
+            ->bindParam(':person', $person)
+            ->bindParam(':position', $position)
+            ->bindParam(':hire', $hire_date)
+            ->bindParam(':education', $education)
+            ->bindParam(':phone', $phone)
+            ->bindParam(':salary', $salary)
+            ->bindParam(':vacation', $vacation)
+            ->execute();
+
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [
@@ -168,7 +209,11 @@ class EmployeesController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.employees_tapi.delete_employee(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

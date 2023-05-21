@@ -104,6 +104,10 @@ class PatientsController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+                $user = $model->AUTH_DATA;
+                $person = $model->PERSON_ID;
+                $phone = $model->PHONE;
+
                 $patient = Patients::find()->where(['AUTH_DATA' => $model->AUTH_DATA])->andWhere(['PERSON_ID' => $model->PERSON_ID])->one();
                 
                 if ($patient) {
@@ -113,9 +117,16 @@ class PatientsController extends Controller
                     ]);
                 }
 
-                if ($model->save()) {
-                    return $this->redirect(['view', 'ID' => $model->ID]);
-                }
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.patients_tapi.create_patient(:auth_data, :person, :phone); END;
+                ')
+                ->bindParam(':auth_data', $user)
+                ->bindParam(':person', $person)
+                ->bindParam(':phone', $phone)
+                ->execute();
+
+                return $this->redirect('/admin/patients');
+
             }
         } else {
             $model->loadDefaultValues();
@@ -149,10 +160,21 @@ class PatientsController extends Controller
         $oldPerson = $model->PERSON_ID;
 
         if ($this->request->isPost && $model->load($this->request->post())) {
+            $user = $model->AUTH_DATA;
+            $person = $model->PERSON_ID;
+            $phone = $model->PHONE;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.patients_tapi.update_patient(:id, :auth_data, :person, :phone); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':auth_data', $user)
+            ->bindParam(':person', $person)
+            ->bindParam(':phone', $phone);
+
             if (($oldAuth == $model->AUTH_DATA) && ($oldPerson == $model->PERSON_ID)) {
-                if ($model->save()) {
-                    return $this->redirect(['view', 'ID' => $model->ID]);
-                }
+                $command->execute();
+                return $this->redirect(['view', 'ID' => $model->ID]);
             }
             
             if ($oldAuth != $model->AUTH_DATA || $oldPerson != $model->PERSON_ID) {
@@ -165,9 +187,7 @@ class PatientsController extends Controller
                 }
             }
 
-            if ($model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
-            }
+            return $this->redirect('index');
         }
 
         return $this->render('update', [
@@ -194,7 +214,11 @@ class PatientsController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.patients_tapi.delete_patient(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

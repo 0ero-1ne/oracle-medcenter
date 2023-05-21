@@ -98,13 +98,23 @@ class DepartmentsController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Departments::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Departments();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+            if ($model->load($this->request->post())) {
+                $dep_name = $model->DEPARTMENT_NAME;
+                $dep_address = $model->ADDRESS_ID;
+                $dep_manager = $model->DEPARTMENT_MANAGER;
+
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.departments_tapi.create_department(:name, :address, :manager); END;
+                ')
+                ->bindParam(':name', $dep_name)
+                ->bindParam(':address', $dep_address)
+                ->bindParam(':manager', $dep_manager)
+                ->execute();
+
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -136,8 +146,21 @@ class DepartmentsController extends Controller
 
         $model = $this->findModel($ID);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'ID' => $model->ID]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $dep_name = $model->DEPARTMENT_NAME;
+            $dep_address = $model->ADDRESS_ID;
+            $dep_manager = $model->DEPARTMENT_MANAGER;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.departments_tapi.update_department(:id, :name, :address, :manager); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':name', $dep_name)
+            ->bindParam(':address', $dep_address)
+            ->bindParam(':manager', $dep_manager)
+            ->execute();
+
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [
@@ -163,8 +186,12 @@ class DepartmentsController extends Controller
         if (!Yii::$app->user->isGuest && !$isAdmin) {
             return $this->goHome();
         }
-        
-        $this->findModel($ID)->delete();
+
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.departments_tapi.delete_department(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

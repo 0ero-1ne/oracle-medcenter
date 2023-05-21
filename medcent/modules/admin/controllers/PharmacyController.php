@@ -98,13 +98,27 @@ class PharmacyController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Pharmacy::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Pharmacy();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+            if ($model->load($this->request->post())) {
+                $drug = $model->DRUG;
+                $price = $model->PRICE;
+                $stock = $model->STOCK;
+                $need_recipe = $model->NEED_RECIPE;
+                $supplier = $model->SUPPLIER_ID;
+
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.pharmacy_tapi.create_drug(:drug, :price, :stock, :need_recipe, :supplier); END;
+                ')
+                ->bindParam(':drug', $drug)
+                ->bindParam(':price', $price)
+                ->bindParam(':stock', $stock)
+                ->bindParam(':need_recipe', $need_recipe)
+                ->bindParam(':supplier', $supplier)
+                ->execute();
+
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -136,7 +150,24 @@ class PharmacyController extends Controller
 
         $model = $this->findModel($ID);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $drug = $model->DRUG;
+            $price = $model->PRICE;
+            $stock = $model->STOCK;
+            $need_recipe = $model->NEED_RECIPE;
+            $supplier = $model->SUPPLIER_ID;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.pharmacy_tapi.update_drug(:id, :drug, :price, :stock, :need_recipe, :supplier); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':drug', $drug)
+            ->bindParam(':price', $price)
+            ->bindParam(':stock', $stock)
+            ->bindParam(':need_recipe', $need_recipe)
+            ->bindParam(':supplier', $supplier)
+            ->execute();
+
             return $this->redirect(['view', 'ID' => $model->ID]);
         }
 
@@ -164,7 +195,11 @@ class PharmacyController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.pharmacy_tapi.delete_drug(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

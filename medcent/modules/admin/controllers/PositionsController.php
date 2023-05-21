@@ -98,13 +98,21 @@ class PositionsController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Positions::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Positions();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+            if ($model->load($this->request->post())) {
+                $name = $model->POSITION_NAME;
+                $type = $model->POSITION_TYPE;
+
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.positions_tapi.create_position(:name, :type); END;
+                ')
+                ->bindParam(':name', $name)
+                ->bindParam(':type', $type)
+                ->execute();
+
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -136,7 +144,18 @@ class PositionsController extends Controller
 
         $model = $this->findModel($ID);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $name = $model->POSITION_NAME;
+            $type = $model->POSITION_TYPE;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.positions_tapi.update_position(:id, :name, :type); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':name', $name)
+            ->bindParam(':type', $type)
+            ->execute();
+
             return $this->redirect(['view', 'ID' => $model->ID]);
         }
 
@@ -164,7 +183,11 @@ class PositionsController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.positions_tapi.delete_position(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

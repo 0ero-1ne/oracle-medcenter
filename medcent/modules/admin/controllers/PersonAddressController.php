@@ -98,12 +98,13 @@ class PersonAddressController extends Controller
             return $this->goHome();
         }
 
-        $last_id = PersonAddress::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new PersonAddress();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+                $person = $model->PERSON_ID;
+                $address = $model->ADDRESS_ID;
+
                 $perAdr = PersonAddress::findOne(['PERSON_ID' => $model->PERSON_ID, 'ADDRESS_ID' => $model->ADDRESS_ID]);
                 
                 if ($perAdr) {
@@ -113,9 +114,14 @@ class PersonAddressController extends Controller
                     ]);
                 }
 
-                if ($model->save()) {
-                    return $this->redirect(['view', 'ID' => $model->ID]);
-                }
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.person_address_tapi.create_person_address(:person, :address); END;
+                ')
+                ->bindParam(':person', $person)
+                ->bindParam(':address', $address)
+                ->execute();
+
+                return $this->redirect('index');
             }
         } else {
             $model->loadDefaultValues();
@@ -148,6 +154,9 @@ class PersonAddressController extends Controller
         $model = $this->findModel($ID);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
+            $person = $model->PERSON_ID;
+            $address = $model->ADDRESS_ID;
+            
             $perAdr = PersonAddress::findOne(['PERSON_ID' => $model->PERSON_ID, 'ADDRESS_ID' => $model->ADDRESS_ID]);
                 
             if ($perAdr) {
@@ -157,9 +166,15 @@ class PersonAddressController extends Controller
                 ]);
             }
 
-            if ($model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
-            }
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.person_address_tapi.update_person_address(:id, :person, :address); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':person', $person)
+            ->bindParam(':address', $address)
+            ->execute();
+
+            return $this->redirect(['view', 'ID' => $ID]);
         }
 
         return $this->render('update', [
@@ -186,7 +201,11 @@ class PersonAddressController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.person_address_tapi.delete_person_address(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

@@ -275,13 +275,14 @@ class DefaultController extends Controller
             return $this->goHome();
         }
 
-        $model = Talons::findOne($ID);
-        $model->PATIENT_ID = '';
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.unbook_talon(:talon_id); END;
+        ')
+        ->bindParam(':talon_id', $ID)
+        ->execute();
 
-        if ($model->save()) {
-            return $this->redirect('/user');
-        }
-
+        Yii::$app->getSession()->setFlash('success', 'Бронь удалена!');
+        return $this->redirect('/user');
     }
 
     public function actionAddPatient()

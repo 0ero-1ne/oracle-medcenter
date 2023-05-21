@@ -98,17 +98,23 @@ class UsersController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Users::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Users();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $model->setPassword($model->PASSWORD);
-                if ($model->save())
-                {
-                    return $this->redirect(['view', 'ID' => $model->ID]);
-                }
+                $role = $model->USER_ROLE;
+                $email = $model->EMAIL;
+                $password = $model->PASSWORD;
+                
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.users_tapi.create_user(:role, :email, :password); END;
+                ')
+                ->bindParam(':role', $role)
+                ->bindParam(':email', $email)
+                ->bindParam(':password', $password)
+                ->execute();
+
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -142,19 +148,20 @@ class UsersController extends Controller
         $old_password = $model->PASSWORD;
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-            if ($old_password == $model->PASSWORD)
-            {
-                if ($model->save())
-                {
-                    return $this->redirect(['view', 'ID' => $model->ID]);
-                }
-            }
+            $role = $model->USER_ROLE;
+            $email = $model->EMAIL;
+            $password = $model->PASSWORD === $old_password ? '' : $model->PASSWORD;
+            
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.users_tapi.update_user(:id, :role, :email, :password); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':role', $role)
+            ->bindParam(':email', $email)
+            ->bindParam(':password', $password)
+            ->execute();
 
-            $model->setPassword($model->PASSWORD);
-            if ($model->save())
-            {
-                return $this->redirect(['view', 'ID' => $model->ID]);
-            }
+            return $this->redirect(['view', 'ID' => $model->ID]);
         }
 
         return $this->render('update', [
@@ -180,8 +187,17 @@ class UsersController extends Controller
         if (!Yii::$app->user->isGuest && !$isAdmin) {
             return $this->goHome();
         }
+
+        if ($this->findModel($ID)->EMAIL === Yii::$app->user->identity->EMAIL) {
+            Yii::$app->getSession()->setFlash('error', 'Вы не можете удалить сами себя, пока вы авторизованы');
+            return $this->redirect(['index']);
+        }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.users_tapi.delete_user(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

@@ -98,13 +98,23 @@ class CommentsController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Comments::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Comments();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+            if ($model->load($this->request->post())) {
+                $employee_id = $model->EMPLOYEE_ID;
+                $user_id = $model->USER_ID;
+                $comment_text = $model->COMMENT_TEXT;
+
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.comments_tapi.create_comment(:pat, :emp, :text); END;
+                ')
+                ->bindParam(':emp', $employee_id)
+                ->bindParam(':pat', $user_id)
+                ->bindParam(':text', $comment_text)
+                ->execute();
+
+                return $this->redirect('/admin/comments');
             }
         } else {
             $model->loadDefaultValues();
@@ -136,7 +146,20 @@ class CommentsController extends Controller
 
         $model = $this->findModel($ID);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $employee_id = $model->EMPLOYEE_ID;
+            $user_id = $model->USER_ID;
+            $comment_text = $model->COMMENT_TEXT;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.comments_tapi.update_comment(:id, :pat, :emp, :text); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':emp', $employee_id)
+            ->bindParam(':pat', $user_id)
+            ->bindParam(':text', $comment_text)
+            ->execute();
+            
             return $this->redirect(['view', 'ID' => $model->ID]);
         }
 
@@ -164,7 +187,11 @@ class CommentsController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.comments_tapi.delete_comment(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

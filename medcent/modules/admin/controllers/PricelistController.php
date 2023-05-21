@@ -98,13 +98,23 @@ class PricelistController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Pricelist::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Pricelist();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+            if ($model->load($this->request->post())) {
+                $position = $model->POSITION_ID;
+                $service = $model->SERVICE;
+                $price = $model->PRICE;
+
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.pricelist_tapi.create_listitem(:position, :service, :price); END;
+                ')
+                ->bindParam(':position', $position)
+                ->bindParam(':service', $service)
+                ->bindParam(':price', $price)
+                ->execute();
+
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -136,7 +146,20 @@ class PricelistController extends Controller
 
         $model = $this->findModel($ID);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $position = $model->POSITION_ID;
+            $service = $model->SERVICE;
+            $price = $model->PRICE;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.pricelist_tapi.update_listitem(:id, :position, :service, :price); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':position', $position)
+            ->bindParam(':service', $service)
+            ->bindParam(':price', $price)
+            ->execute();
+
             return $this->redirect(['view', 'ID' => $model->ID]);
         }
 
@@ -164,7 +187,11 @@ class PricelistController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.pricelist_tapi.delete_listitem(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

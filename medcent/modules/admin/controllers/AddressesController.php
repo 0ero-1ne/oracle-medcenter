@@ -98,13 +98,27 @@ class AddressesController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Addresses::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Addresses();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
+            if ($model->load($this->request->post())) {
+                $region = $model->REGION;
+                $town = $model->TOWN;
+                $street = $model->STREET;
+                $house_num = $model->HOUSE_NUMBER;
+                $flat = $model->FLAT;
+
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.addresses_tapi.create_address(:region, :town, :street, :house_num, :flat); END;
+                ')
+                ->bindParam(':region', $region)
+                ->bindParam(':town', $town)
+                ->bindParam(':street', $street)
+                ->bindParam(':house_num', $house_num)
+                ->bindParam(':flat', $flat)
+                ->execute();
+
+                return $this->redirect('/admin/addresses');
             }
         } else {
             $model->loadDefaultValues();
@@ -136,7 +150,24 @@ class AddressesController extends Controller
 
         $model = $this->findModel($ID);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $region = $model->REGION;
+            $town = $model->TOWN;
+            $street = $model->STREET;
+            $house_num = $model->HOUSE_NUMBER;
+            $flat = $model->FLAT;
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.addresses_tapi.update_address(:id, :region, :town, :street, :house_num, :flat); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':region', $region)
+            ->bindParam(':town', $town)
+            ->bindParam(':street', $street)
+            ->bindParam(':house_num', $house_num)
+            ->bindParam(':flat', $flat)
+            ->execute();
+
             return $this->redirect(['view', 'ID' => $model->ID]);
         }
 
@@ -164,7 +195,11 @@ class AddressesController extends Controller
             return $this->goHome();
         }
 
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+            BEGIN system.addresses_tapi.delete_address(:id); END;
+        ')
+        ->bindParam(':id', $ID)
+        ->execute();
 
         return $this->redirect(['index']);
     }

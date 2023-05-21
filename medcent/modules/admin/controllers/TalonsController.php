@@ -98,14 +98,21 @@ class TalonsController extends Controller
             return $this->goHome();
         }
 
-        $last_id = Talons::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new Talons();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+                $emp = $model->EMPLOYEE_ID;
+                $date = $model->TALON_DATE;
                 $isTalonExists = Talons::findOne(['EMPLOYEE_ID' => $model->EMPLOYEE_ID, 'TALON_DATE' => $model->TALON_DATE]);
                 
+                if (strtotime($date) < strtotime('now')) {
+                    YII::$app->getSession()->setFlash('error', 'Неправильно указана дата талона!');
+                    return $this->render('create', [
+                        'model' => $model
+                    ]);
+                }
+
                 if ($isTalonExists) {
                     Yii::$app->getSession()->setFlash('error', 'Talon already exists!');
                     return $this->render('create', [
@@ -113,11 +120,14 @@ class TalonsController extends Controller
                     ]);
                 }
                 
-                if ($model->save())
-                {
-                    return $this->redirect(['view', 'ID' => $model->ID]);
-                }
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.talons_tapi.create_talon(:date, :emp); END;
+                ')
+                ->bindParam(':date', $date)
+                ->bindParam(':emp', $emp)
+                ->execute();
 
+                return $this->redirect('/admin/talons');
             }
         } else {
             $model->loadDefaultValues();
@@ -150,19 +160,35 @@ class TalonsController extends Controller
         $model = $this->findModel($ID);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
+            $emp = $model->EMPLOYEE_ID;
+            $date = $model->TALON_DATE;
+            $patient = $model->PATIENT_ID;
             $isTalonExists = Talons::findOne(['EMPLOYEE_ID' => $model->EMPLOYEE_ID, 'TALON_DATE' => $model->TALON_DATE]);
-                
+            
+            if (strtotime($date) < strtotime('now')) {
+                YII::$app->getSession()->setFlash('error', 'Неправильно указана дата талона!');
+                return $this->render('create', [
+                    'model' => $model
+                ]);
+            }
+            
             if ($isTalonExists) {
                 Yii::$app->getSession()->setFlash('error', 'Talon already exists!');
                 return $this->render('create', [
                     'model' => $model
                 ]);
             }
+
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.talons_tapi.update_talon(:id, :date, :emp, :pat); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':date', $date)
+            ->bindParam(':emp', $emp)
+            ->bindParam(':pat', $patient)
+            ->execute();
             
-            if ($model->save())
-            {
-                return $this->redirect(['view', 'ID' => $model->ID]);
-            }
+            return $this->redirect('/admin/talons');
         }
 
         return $this->render('update', [

@@ -98,12 +98,13 @@ class DepartmentEmployeeController extends Controller
             return $this->goHome();
         }
 
-        $last_id = DepartmentEmployee::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0;
         $model = new DepartmentEmployee();
-        $model->ID = $last_id + 1;
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+                $department = $model->DEPARTMENT_ID;
+                $employee = $model->EMPLOYEE_ID;
+
                 $depEmp = DepartmentEmployee::findOne(['DEPARTMENT_ID' => $model->DEPARTMENT_ID, 'EMPLOYEE_ID' => $model->EMPLOYEE_ID]);
                 
                 if ($depEmp) {
@@ -113,10 +114,14 @@ class DepartmentEmployeeController extends Controller
                     ]);
                 }
 
-                if ($model->save()) {
-                    return $this->redirect(['view', 'ID' => $model->ID]);
-                }
-                
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.department_employee_tapi.create_department_employee(:dep, :emp); END;
+                ')
+                ->bindParam(':dep', $department)
+                ->bindParam(':emp', $employee)
+                ->execute();
+
+                return $this->redirect('/admin/department-employee');
             }
         } else {
             $model->loadDefaultValues();
@@ -149,6 +154,8 @@ class DepartmentEmployeeController extends Controller
         $model = $this->findModel($ID);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
+            $department = $model->DEPARTMENT_ID;
+            $employee = $model->EMPLOYEE_ID;
             $depEmp = DepartmentEmployee::findOne(['DEPARTMENT_ID' => $model->DEPARTMENT_ID, 'EMPLOYEE_ID' => $model->EMPLOYEE_ID]);
                 
             if ($depEmp) {
@@ -158,9 +165,15 @@ class DepartmentEmployeeController extends Controller
                 ]);
             }
 
-            if ($model->save()) {
-                return $this->redirect(['view', 'ID' => $model->ID]);
-            }
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.department_employee_tapi.update_department_employee(:id, :dep, :emp); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->bindParam(':dep', $department)
+            ->bindParam(':emp', $employee)
+            ->execute();
+            
+            return $this->redirect('/admin/department-employee');
         }
 
         return $this->render('update', [
@@ -187,7 +200,11 @@ class DepartmentEmployeeController extends Controller
             return $this->goHome();
         }
         
-        $this->findModel($ID)->delete();
+        $command = Yii::$app->db->createCommand('
+                BEGIN system.department_employee_tapi.delete_department_employee(:id); END;
+            ')
+            ->bindParam(':id', $ID)
+            ->execute();
 
         return $this->redirect(['index']);
     }

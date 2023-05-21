@@ -154,7 +154,6 @@ class SiteController extends Controller
 
     public function actionBookTalon($id)
     {
-        $model = Talons::findOne($id);
         $bookTalon = new BookTalon();
         $userID = Yii::$app->user->identity->ID;
 
@@ -167,13 +166,17 @@ class SiteController extends Controller
             ->all();
 
         if ($bookTalon->load(Yii::$app->request->post())) {
-            $model->PATIENT_ID = $bookTalon->PATIENT_ID;
+            $patient_id = (integer)$bookTalon->PATIENT_ID; 
 
-            if ($model->save())
-            {
-                Yii::$app->getSession()->setFlash('success', 'Талон забронирован');
-                return $this->redirect('/user');
-            }
+            $command = Yii::$app->db->createCommand('
+                BEGIN system.book_talon(:pat_id, :talon_id); END;
+            ')
+            ->bindParam(':pat_id', $patient_id)
+            ->bindParam(':talon_id', $id)
+            ->execute();
+
+            Yii::$app->getSession()->setFlash('success', 'Талон забронирован');
+            return $this->redirect('/user');
         }
 
         return $this->render('book-talon', [
@@ -189,11 +192,19 @@ class SiteController extends Controller
         }
 
         $model = new Comments();
-        $model->ID = (Comments::find()->orderBy(['ID' => SORT_DESC])->one()->ID ?? 0) + 1;
-        $model->USER_ID = Yii::$app->user->identity->ID;
+        $USER_ID = Yii::$app->user->identity->ID;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+                $employee_id = $model->EMPLOYEE_ID;
+                $comment_text = $model->COMMENT_TEXT;
+                $command = Yii::$app->db->createCommand('
+                    BEGIN system.COMMENTS_tapi.create_comment(:user_id, :employee_id, :comment_text); END;
+                ')
+                ->bindParam(':user_id', $USER_ID)
+                ->bindParam(':employee_id', $employee_id)
+                ->bindParam(':comment_text', $comment_text)
+                ->execute();
                 Yii::$app->getSession()->setFlash('success', 'Ваш отзыв очень полезен для нас');
                 return $this->goHome();
             }
